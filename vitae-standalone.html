@@ -1,0 +1,3136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vitae — monte seu currículo e exporte em PDF</title>
+<meta name="description" content="Monte um currículo profissional em minutos, escolha o modelo, as cores e exporte em PDF tamanho A4. Grátis e sem cadastro.">
+<meta name="theme-color" content="#14171c">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Poppins:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif&display=swap"></noscript>
+
+<style>
+/* =============================================================
+   Vitae — estilos da aplicação (não do currículo).
+   O visual do currículo vive em js/templates.js, injetado em
+   <style id="cv-template-style">, para não vazar aqui.
+   Convenção: BEM (bloco__elemento--modificador).
+   ============================================================= */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  --paper:      #f3f2ee;
+  --surface:    #ffffff;
+  --surface-2:  #fafaf8;
+  --ink:        #15181b;
+  --muted:      #636a74;
+  --line:       #e3e1d9;
+  --line-soft:  #edece6;
+  --signal:     #1f6f5c;
+  --signal-ink: #17594a;
+  --signal-bg:  #e6f1ed;
+  --warn:       #9a5b13;
+  --danger:     #a8342c;
+
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 18px;
+
+  --shadow-s: 0 1px 2px rgba(20, 24, 28, .06);
+  --shadow-m: 0 6px 20px -8px rgba(20, 24, 28, .22);
+  --shadow-l: 0 24px 60px -24px rgba(20, 24, 28, .35);
+
+  --appbar-h: 60px;
+  --tabbar-h: 0px;
+
+  --ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+
+[data-theme="dark"] {
+  --paper:      #0f1115;
+  --surface:    #171a20;
+  --surface-2:  #1d212a;
+  --ink:        #e9eaec;
+  --muted:      #99a1ad;
+  --line:       #2a2f38;
+  --line-soft:  #22262e;
+  --signal:     #4db79a;
+  --signal-ink: #6fcfb3;
+  --signal-bg:  #16302a;
+  --shadow-m: 0 6px 20px -8px rgba(0, 0, 0, .6);
+  --shadow-l: 0 24px 60px -24px rgba(0, 0, 0, .8);
+}
+
+/* ---------- 2. Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding-top: var(--appbar-h);
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.2; font-weight: 600; }
+p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+img { max-width: 100%; display: block; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.u-hidden { display: none; }
+.u-visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+.icon { width: 20px; height: 20px; flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+/* ---------- 3. Botões ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 16px;
+  border: 1px solid transparent; border-radius: var(--radius-m);
+  background: transparent; color: inherit;
+  font: inherit; font-weight: 500; cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, transform .1s ease, color .16s ease;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn--primary { background: var(--signal); color: #fff; box-shadow: var(--shadow-s); }
+.btn--primary:hover { background: var(--signal-ink); }
+[data-theme="dark"] .btn--primary { color: #08110e; }
+
+.btn--quiet { background: var(--surface); border-color: var(--line); }
+.btn--quiet:hover { border-color: var(--muted); }
+
+.btn--ghost { color: var(--muted); }
+.btn--ghost:hover { background: var(--line-soft); color: var(--ink); }
+
+.btn--icon { width: 44px; padding: 0; }
+
+.btn--sm { min-height: 36px; padding: 0 12px; font-size: 13.5px; border-radius: var(--radius-s); }
+
+.btn--lg { min-height: 52px; padding: 0 24px; font-size: 16px; }
+
+.btn--add {
+  width: 100%;
+  border: 1px dashed var(--line);
+  color: var(--signal-ink);
+  background: var(--surface-2);
+}
+.btn--add:hover { border-color: var(--signal); background: var(--signal-bg); }
+
+.btn--danger { color: var(--danger); }
+.btn--danger:hover { background: rgba(168, 52, 44, .1); }
+
+/* ---------- 4. Cabeçalho ---------- */
+.appbar {
+  position: fixed; inset: 0 0 auto 0; z-index: 40;
+  height: var(--appbar-h);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 0 clamp(12px, 3vw, 24px);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: saturate(160%) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.appbar__brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.appbar__mark {
+  width: 24px; height: 30px; border-radius: 3px;
+  background: var(--signal);
+  box-shadow: 4px -4px 0 -1px color-mix(in srgb, var(--signal) 35%, transparent);
+}
+.appbar__name { font-family: var(--display); font-size: 25px; letter-spacing: .01em; }
+
+.appbar__actions { display: flex; align-items: center; gap: 6px; }
+
+.icon--moon { display: none; }
+[data-theme="dark"] .icon--sun { display: none; }
+[data-theme="dark"] .icon--moon { display: block; }
+
+body[data-screen="landing"] .is-editor-only,
+body[data-screen="editor"]  .is-landing-only { display: none; }
+
+/* ---------- 5. Landing ---------- */
+.landing { display: block; }
+body[data-screen="editor"] .landing { display: none; }
+
+.hero {
+  max-width: 1180px; margin: 0 auto;
+  padding: clamp(32px, 7vw, 88px) clamp(20px, 5vw, 40px) clamp(24px, 5vw, 56px);
+  display: grid; gap: clamp(28px, 5vw, 56px);
+  align-items: center;
+}
+
+.hero__kicker { color: var(--signal-ink); font-size: 13.5px; font-weight: 500; margin-bottom: 14px; }
+
+.hero__title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(38px, 7.2vw, 66px);
+  line-height: 1.04;
+  letter-spacing: -.015em;
+}
+
+.hero__lead {
+  margin-top: 20px; max-width: 52ch;
+  color: var(--muted); font-size: clamp(16px, 2vw, 18px);
+}
+
+.hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+
+.hero__note {
+  margin-top: 18px; font-size: 14px; color: var(--signal-ink);
+  background: var(--signal-bg); display: inline-block;
+  padding: 8px 14px; border-radius: 999px;
+}
+
+/* Folha do hero: uma única animação orquestrada na carga */
+.hero__sheet { display: flex; justify-content: center; }
+.sheet {
+  width: min(330px, 78vw); aspect-ratio: 210 / 297;
+  background: #fff; border-radius: 4px;
+  box-shadow: var(--shadow-l);
+  padding: 11%; display: flex; flex-direction: column; gap: 11px;
+  transform: rotate(-2.2deg);
+  position: relative; overflow: hidden;
+}
+[data-theme="dark"] .sheet { background: #f7f7f5; }
+.sheet__bar { height: 9px; border-radius: 3px; background: #e6e5e0; transform-origin: left; animation: sheet-in .5s cubic-bezier(.2,.8,.3,1) both; }
+.sheet__bar--name { height: 22px; width: 68%; background: var(--signal); animation-delay: .1s; }
+.sheet__bar--role { height: 11px; width: 44%; background: #c9c8c2; animation-delay: .18s; }
+.sheet__bar--l { width: 100%; animation-delay: .3s; }
+.sheet__bar--m { width: 82%; animation-delay: .38s; }
+.sheet__bar--s { width: 58%; animation-delay: .46s; }
+.sheet__rule { height: 2px; background: var(--signal); opacity: .35; animation: sheet-in .5s .24s cubic-bezier(.2,.8,.3,1) both; transform-origin: left; }
+.sheet__chip {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: color-mix(in srgb, var(--signal) 22%, #fff);
+  position: absolute; right: 11%; top: 9%;
+  animation: sheet-pop .5s .5s cubic-bezier(.2,.9,.3,1.2) both;
+}
+@keyframes sheet-in { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+@keyframes sheet-pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.features {
+  max-width: 1180px; margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 40px) clamp(48px, 8vw, 96px);
+  display: grid; gap: 28px;
+  border-top: 1px solid var(--line); padding-top: clamp(32px, 5vw, 56px);
+}
+.feature__title { font-size: 18px; margin-bottom: 8px; }
+.feature p { color: var(--muted); max-width: 42ch; }
+
+@media (min-width: 768px) {
+  .features { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+  .hero { grid-template-columns: 1.15fr .85fr; }
+}
+
+/* ---------- 6. Layout do editor ---------- */
+.editor { display: block; }
+body[data-screen="landing"] .editor { display: none; }
+
+.railnav { display: none; }
+
+.pane--form {
+  padding: 20px clamp(14px, 4vw, 26px) 40px;
+  max-width: 760px; margin: 0 auto;
+}
+
+.pane--preview {
+  display: none;
+  height: calc(100vh - var(--appbar-h) - var(--tabbar-h));
+}
+
+/* Abas fixas no rodapé (mobile) */
+.tabbar {
+  position: fixed; inset: auto 0 0 0; z-index: 35;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar__btn {
+  min-height: 58px; border: 0; background: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  font: inherit; font-size: 11.5px; color: var(--muted);
+  border-top: 2px solid transparent;
+}
+.tabbar__btn.is-active { color: var(--signal-ink); border-top-color: var(--signal); }
+
+body[data-screen="editor"] { --tabbar-h: 62px; padding-bottom: var(--tabbar-h); }
+body[data-screen="landing"] .tabbar { display: none; }
+
+/* Estado das abas no mobile */
+@media (max-width: 1023px) {
+  body[data-tab="preview"] .pane--form { display: none; }
+  body[data-tab="preview"] .pane--preview { display: block; }
+  body[data-tab="preview"] .credits { display: none; }
+}
+
+/* ---------- 7. Desktop ---------- */
+@media (min-width: 1024px) {
+  body[data-screen="editor"] { padding-bottom: 0; --tabbar-h: 0px; }
+  .tabbar { display: none; }
+
+  .editor {
+    display: grid;
+    grid-template-columns: 64px minmax(380px, 1fr) minmax(420px, 1.05fr);
+    height: calc(100vh - var(--appbar-h));
+  }
+
+  .railnav {
+    display: block; overflow-y: auto;
+    border-right: 1px solid var(--line);
+    background: var(--surface);
+    padding: 14px 0;
+  }
+  .railnav__list { display: flex; flex-direction: column; gap: 2px; }
+  .railnav__link {
+    display: flex; align-items: center; gap: 12px;
+    min-height: 44px; padding: 0 14px;
+    color: var(--muted); text-decoration: none; font-size: 14px;
+    white-space: nowrap; overflow: hidden;
+    border-left: 2px solid transparent;
+  }
+  .railnav__link:hover { background: var(--line-soft); color: var(--ink); }
+  .railnav__link.is-current { color: var(--signal-ink); border-left-color: var(--signal); background: var(--signal-bg); }
+  .railnav__num {
+    width: 26px; height: 26px; flex: none; border-radius: 7px;
+    display: grid; place-items: center;
+    background: var(--line-soft); font-size: 12px; font-weight: 600;
+  }
+  .railnav__label { opacity: 0; transition: opacity .16s ease; }
+
+  .pane--form { overflow-y: auto; max-width: none; margin: 0; padding: 24px clamp(18px, 2.4vw, 34px) 80px; }
+  .pane--preview { display: block; height: 100%; overflow: hidden; border-left: 1px solid var(--line); background: var(--surface-2); }
+
+  .credits { position: relative; z-index: 1; }
+}
+
+@media (min-width: 1280px) {
+  .editor { grid-template-columns: 216px minmax(420px, 1fr) minmax(520px, 1.1fr); }
+  .railnav__label { opacity: 1; }
+}
+
+@media (min-width: 1440px) {
+  .editor { grid-template-columns: 232px minmax(460px, .92fr) 1.08fr; }
+}
+
+/* ---------- 8. Formulário ---------- */
+.form { display: flex; flex-direction: column; gap: 18px; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  padding: clamp(16px, 3vw, 24px);
+  scroll-margin-top: calc(var(--appbar-h) + 16px);
+}
+.panel__title { font-size: 17px; letter-spacing: -.01em; margin-bottom: 4px; }
+.panel__title + .grid, .panel__title + .list, .panel__title + .field,
+.panel__title + .photo, .panel__title + .templates { margin-top: 16px; }
+.panel__hint { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+.panel__hint + .list { margin-top: 14px; }
+
+.grid { display: grid; gap: 14px; }
+@media (min-width: 560px) { .grid--2 { grid-template-columns: 1fr 1fr; } .field--full { grid-column: 1 / -1; } }
+
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field label, .field__label { font-size: 13px; font-weight: 500; color: var(--muted); }
+.field--inline { flex-direction: row; align-items: center; gap: 10px; }
+
+input[type="text"], input[type="email"], input[type="tel"], input[type="url"],
+input[type="number"], input[type="month"], select, textarea {
+  width: 100%; min-height: 44px; padding: 10px 12px;
+  border: 1px solid var(--line); border-radius: var(--radius-s);
+  background: var(--surface-2); color: var(--ink);
+  font: inherit; font-size: 15px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
+input:hover, select:hover, textarea:hover { border-color: var(--muted); }
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--signal);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal) 18%, transparent);
+}
+input.is-empty-required { border-color: color-mix(in srgb, var(--warn) 55%, var(--line)); }
+
+input[type="color"] { min-height: 44px; padding: 4px; cursor: pointer; }
+
+input[type="range"] { accent-color: var(--signal); width: 100%; height: 44px; }
+
+select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 20px, calc(100% - 13px) 20px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+
+.field__hint { font-size: 12.5px; color: var(--muted); }
+.field__hint.is-warn { color: var(--warn); }
+
+.fieldset { border: 0; padding: 0; margin: 0 0 22px; }
+.fieldset:last-of-type { margin-bottom: 0; }
+.fieldset legend { font-size: 13px; font-weight: 600; color: var(--muted); padding: 0 0 10px; }
+.fieldset .grid { margin-top: 14px; }
+
+.switch { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--muted); cursor: pointer; min-height: 44px; }
+.switch input { width: 20px; height: 20px; accent-color: var(--signal); }
+
+.form__end { text-align: center; color: var(--muted); font-size: 13px; padding: 4px 0 8px; }
+
+/* Foto */
+.photo { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+.photo__preview {
+  width: 96px; height: 96px; flex: none; border-radius: 50%;
+  border: 1px dashed var(--line); background: var(--surface-2);
+  display: grid; place-items: center; overflow: hidden;
+}
+.photo__preview img { width: 100%; height: 100%; object-fit: cover; }
+.photo__preview img:not([hidden]) + .photo__empty { display: none; }
+.photo__empty { font-size: 12px; color: var(--muted); }
+.photo__controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; flex: 1 1 220px; }
+.photo__controls .field { flex: 1 1 100%; }
+
+/* ---------- 9. Listas dinâmicas ---------- */
+.list { display: flex; flex-direction: column; gap: 12px; }
+
+.item {
+  border: 1px solid var(--line); border-radius: var(--radius-m);
+  background: var(--surface-2);
+  padding: 12px 12px 14px;
+  animation: item-in .22s cubic-bezier(.2, .8, .3, 1) both;
+}
+.item.is-dragging { opacity: .45; }
+.item.is-dropzone { border-color: var(--signal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal) 15%, transparent); }
+.item.is-leaving { animation: item-out .18s ease forwards; }
+
+@keyframes item-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@keyframes item-out { to { opacity: 0; transform: translateY(-6px); max-height: 0; padding-block: 0; margin-bottom: -12px; } }
+
+.item__head { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.item__handle {
+  width: 32px; height: 40px; border: 0; background: none; color: var(--muted);
+  cursor: grab; display: grid; place-items: center; border-radius: var(--radius-s);
+}
+.item__handle:hover { background: var(--line-soft); color: var(--ink); }
+.item__handle:active { cursor: grabbing; }
+
+/* Em tela de toque o arraste HTML5 não existe: ficam só as setas. */
+@media (pointer: coarse) { .item__handle { display: none; } }
+.item__title {
+  flex: 1; min-width: 0; font-size: 14px; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.item__move {
+  width: 34px; height: 40px; min-height: 40px; padding: 0;
+  border-radius: var(--radius-s); color: var(--muted);
+  font-size: 15px; line-height: 1;
+}
+.item__move:hover:not(:disabled) { background: var(--line-soft); color: var(--ink); }
+.item__move:disabled { opacity: .3; cursor: default; }
+
+.item__remove { width: 40px; height: 40px; min-height: 40px; padding: 0; border-radius: var(--radius-s); color: var(--muted); }
+.item__remove:hover { color: var(--danger); background: rgba(168, 52, 44, .08); }
+.item__body { display: grid; gap: 12px; }
+@media (min-width: 560px) { .item__body.grid--2 { grid-template-columns: 1fr 1fr; } }
+
+.item__current { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--muted); min-height: 44px; }
+.item__current input { width: 18px; height: 18px; accent-color: var(--signal); }
+
+/* Nível (bolinhas) */
+.level { display: flex; gap: 6px; align-items: center; min-height: 44px; }
+.level__dot {
+  width: 26px; height: 26px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--surface); cursor: pointer;
+  transition: background-color .12s ease, transform .12s ease;
+}
+.level__dot:hover { transform: scale(1.1); }
+.level__dot.is-on { background: var(--signal); border-color: var(--signal); }
+
+/* ---------- 10. Modelos e paletas ---------- */
+.templates { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 12px; }
+
+.tpl {
+  border: 1px solid var(--line); border-radius: var(--radius-m);
+  background: var(--surface-2); padding: 8px; cursor: pointer; text-align: left;
+  font: inherit; color: inherit;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .12s ease;
+}
+.tpl:hover { transform: translateY(-2px); border-color: var(--muted); }
+.tpl[aria-checked="true"] { border-color: var(--signal); box-shadow: 0 0 0 2px color-mix(in srgb, var(--signal) 40%, transparent); }
+.tpl__thumb { aspect-ratio: 210/297; border-radius: 5px; overflow: hidden; background: #fff; margin-bottom: 8px; }
+.tpl__thumb svg { width: 100%; height: 100%; display: block; }
+.tpl__name { font-size: 13px; font-weight: 600; display: block; }
+.tpl__tag { font-size: 11.5px; color: var(--muted); }
+
+.palettes { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 10px; }
+.pal {
+  height: 48px; border-radius: var(--radius-s); border: 1px solid var(--line);
+  cursor: pointer; padding: 0; overflow: hidden; display: flex;
+  transition: transform .12s ease, box-shadow .15s ease;
+}
+.pal:hover { transform: translateY(-2px); }
+.pal[aria-checked="true"] { box-shadow: 0 0 0 2px var(--signal); border-color: transparent; }
+.pal__a { flex: 2; } .pal__b { flex: 1; }
+
+.contrast { margin-top: 12px; font-size: 13px; color: var(--muted); }
+.contrast.is-bad { color: var(--warn); }
+
+/* Segmentado P/M/G */
+.segmented {
+  display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius-s);
+  overflow: hidden; background: var(--surface-2);
+}
+.segmented button {
+  min-width: 52px; min-height: 44px; border: 0; background: none; cursor: pointer;
+  font: inherit; font-weight: 500; color: var(--muted);
+}
+.segmented button + button { border-left: 1px solid var(--line); }
+.segmented button[aria-checked="true"] { background: var(--signal); color: #fff; }
+[data-theme="dark"] .segmented button[aria-checked="true"] { color: #08110e; }
+
+/* ---------- 11. Preview ---------- */
+.preview { height: 100%; display: flex; flex-direction: column; }
+
+.preview__toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px clamp(12px, 2vw, 20px);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.zoom { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.preview__meta { font-size: 13px; color: var(--muted); }
+
+.preview__stage {
+  flex: 1; overflow: auto; padding: clamp(14px, 3vw, 32px);
+  display: flex; justify-content: center; align-items: flex-start;
+}
+.preview__scaler { transform-origin: top center; transition: transform .18s ease; }
+
+/* Folha A4 — medidas reais, é o que vira PDF */
+.cv-page {
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
+  color: #1a1a1a;
+  box-shadow: var(--shadow-l);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Guias de quebra de página, só na tela */
+.cv-page__break {
+  position: absolute; left: 0; right: 0; height: 0;
+  border-top: 1px dashed rgba(31, 111, 92, .5);
+  pointer-events: none;
+}
+.cv-page__break::after {
+  content: attr(data-label);
+  position: absolute; right: 4mm; top: 2mm;
+  font: 500 9px/1 var(--ui); color: #1f6f5c;
+  background: #fff; padding: 2px 6px; border-radius: 4px;
+}
+
+/* ---------- 12. Rodapé de créditos ---------- */
+.credits {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 20px calc(18px + var(--tabbar-h));
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 14px; color: var(--muted);
+}
+.credits strong { color: var(--ink); font-weight: 600; }
+.credits__links { display: flex; gap: 6px; }
+.credits__link {
+  width: 44px; height: 44px; border-radius: var(--radius-s);
+  display: grid; place-items: center; color: var(--muted);
+  transition: color .15s ease, background-color .15s ease, transform .15s ease;
+}
+.credits__link:hover { transform: translateY(-2px); }
+.credits__link--wa:hover { color: #25d366; background: rgba(37, 211, 102, .12); }
+.credits__link--ig:hover { color: #e1306c; background: rgba(225, 48, 108, .12); }
+.credits__link--gh:hover { color: var(--ink); background: var(--line-soft); }
+
+@media (min-width: 1024px) {
+  body[data-screen="editor"] .credits {
+    position: fixed; inset: auto 0 0 0; z-index: 30;
+    padding: 8px 20px; font-size: 13px;
+  }
+  body[data-screen="editor"] .credits__link { width: 36px; height: 36px; }
+  body[data-screen="editor"] .pane--form { padding-bottom: 96px; }
+  body[data-screen="editor"] .preview__stage { padding-bottom: 72px; }
+}
+
+/* ---------- 13. Modal, toast, overlay ---------- */
+.modal { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 20px; }
+.modal[hidden] { display: none; }
+.modal__backdrop { position: absolute; inset: 0; background: rgba(12, 14, 17, .5); backdrop-filter: blur(2px); }
+.modal__box {
+  position: relative; width: min(440px, 100%);
+  background: var(--surface); border-radius: var(--radius-l);
+  padding: 24px; box-shadow: var(--shadow-l);
+  animation: modal-in .2s cubic-bezier(.2, .8, .3, 1) both;
+}
+@keyframes modal-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+.modal__title { font-size: 19px; }
+.modal__text { margin-top: 8px; color: var(--muted); }
+.modal__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + var(--tabbar-h)); transform: translateX(-50%);
+  z-index: 70; background: var(--ink); color: var(--paper);
+  padding: 12px 18px; border-radius: 999px; font-size: 14px;
+  box-shadow: var(--shadow-m); animation: toast-in .2s ease both;
+}
+.toast[hidden] { display: none; }
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+.overlay { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: rgba(12, 14, 17, .55); }
+.overlay[hidden] { display: none; }
+.overlay__box {
+  background: var(--surface); border-radius: var(--radius-l); padding: 28px 34px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  box-shadow: var(--shadow-l);
+}
+.spinner {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 3px solid var(--line); border-top-color: var(--signal);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+</style>
+<style media="print">
+/* =============================================================
+   Vitae — impressão direta (Ctrl+P).
+   A exportação oficial é o html2canvas + jsPDF (js/pdf-export.js);
+   isto aqui é a rota de emergência: some com a interface e deixa
+   só a folha A4 na página.
+   ============================================================= */
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Tudo que é interface não vai para o papel */
+  .appbar,
+  .tabbar,
+  .railnav,
+  .pane--form,
+  .preview__toolbar,
+  .credits,
+  .modal,
+  .toast,
+  .overlay,
+  .landing {
+    display: none !important;
+  }
+
+  .editor { display: block !important; height: auto !important; }
+
+  .pane--preview {
+    display: block !important;
+    border: 0 !important;
+    background: #fff !important;
+    overflow: visible !important;
+  }
+
+  .preview,
+  .preview__stage {
+    display: block !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Escala de tela não pode interferir na escala do papel */
+  .preview__scaler {
+    transform: none !important;
+    width: auto !important;
+  }
+
+  .cv-page {
+    width: 210mm !important;
+    min-height: 297mm;
+    box-shadow: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Guias de quebra são auxílio de tela */
+  .cv-page__break { display: none !important; }
+
+  /* Não partir um item de experiência entre duas folhas */
+  .cv-block,
+  .cv-entry,
+  .cv-chip { break-inside: avoid; page-break-inside: avoid; }
+
+  .cv-section-title { break-after: avoid; page-break-after: avoid; }
+
+  a { text-decoration: none; color: inherit; }
+}
+
+</style>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%231f6f5c'/><rect x='4' y='4' width='8' height='2' fill='%23fff'/><rect x='4' y='8' width='6' height='1.5' fill='%23fff'/><rect x='4' y='11' width='7' height='1.5' fill='%23fff'/></svg>">
+</head>
+<body data-screen="landing">
+
+<!-- ====== Sprite de ícones (SVG inline, sem requisição de rede) ====== -->
+<svg class="u-hidden" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-drag" viewBox="0 0 24 24"><path fill="currentColor" d="M9 5h2v2H9zm4 0h2v2h-2zM9 9h2v2H9zm4 0h2v2h-2zm-4 4h2v2H9zm4 0h2v2h-2zm-4 4h2v2H9zm4 0h2v2h-2z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4 7h16M10 11v6m4-6v6M6 7l1 12.2A1.8 1.8 0 0 0 8.8 21h6.4A1.8 1.8 0 0 0 17 19.2L18 7M9 7V4.8A.8.8 0 0 1 9.8 4h4.4a.8.8 0 0 1 .8.8V7"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 3v11m0 0 4-4m-4 4-4-4M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4m0-14.2-1.4 1.4M6.3 17.7l-1.4 1.4"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+  <symbol id="i-layout" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M10 4v16M3.5 10h6.5"/></g></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 3.5a8.5 8.5 0 0 0 0 17c1.2 0 1.8-.8 1.8-1.7 0-1.3-1-1.6-1-2.6 0-.8.6-1.4 1.5-1.4h1.6c2.4 0 4.1-1.7 4.1-4.2 0-4-3.6-7.1-8-7.1Z"/><circle cx="7.8" cy="11.5" r="1.2" fill="currentColor"/><circle cx="10.6" cy="7.6" r="1.2" fill="currentColor"/><circle cx="15.2" cy="8.2" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 1.82c2.16 0 4.19.84 5.72 2.37a8.03 8.03 0 0 1 2.37 5.72c0 4.46-3.63 8.09-8.09 8.09a8.2 8.2 0 0 1-4.13-1.13l-.3-.18-3.12.82.83-3.04-.19-.31a8.07 8.07 0 0 1-1.24-4.33c0-4.46 3.63-8.01 8.15-8.01Zm-3.1 4.09c-.15 0-.4.06-.61.28-.21.22-.8.78-.8 1.9s.82 2.2.93 2.36c.12.15 1.6 2.44 3.88 3.42.54.23.96.37 1.29.48.54.17 1.04.15 1.43.09.44-.07 1.34-.55 1.53-1.08.19-.53.19-.99.13-1.08-.06-.09-.21-.15-.43-.26-.22-.11-1.34-.66-1.54-.74-.21-.08-.36-.11-.51.11-.15.22-.58.73-.71.88-.13.15-.26.17-.48.06-.22-.11-.95-.35-1.8-1.11-.67-.6-1.12-1.33-1.25-1.55-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.23-.69-1.68-.18-.44-.36-.38-.5-.39l-.43-.01Z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></g><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .26.18.58.69.48A10 10 0 0 0 12 2Z"/></symbol>
+</svg>
+
+<!-- ====== Cabeçalho ====== -->
+<header class="appbar">
+  <a class="appbar__brand" href="#" data-action="go-landing">
+    <span class="appbar__mark" aria-hidden="true"></span>
+    <span class="appbar__name">Vitae</span>
+  </a>
+
+  <div class="appbar__actions">
+    <button class="btn btn--ghost btn--icon" type="button" data-action="toggle-theme"
+            aria-label="Alternar modo escuro" title="Alternar modo escuro">
+      <svg class="icon icon--sun" aria-hidden="true"><use href="#i-sun"></use></svg>
+      <svg class="icon icon--moon" aria-hidden="true"><use href="#i-moon"></use></svg>
+    </button>
+    <button class="btn btn--ghost is-editor-only" type="button" data-action="open-data-menu">Dados</button>
+    <button class="btn btn--ghost is-editor-only" type="button" data-action="new-resume">Novo</button>
+    <button class="btn btn--primary is-editor-only" type="button" data-action="export-pdf">
+      <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>
+      <span>Exportar PDF</span>
+    </button>
+    <button class="btn btn--primary is-landing-only" type="button" data-action="start">Criar meu currículo</button>
+  </div>
+</header>
+
+<!-- ====== Landing ====== -->
+<main class="landing" id="screen-landing">
+  <section class="hero">
+    <div class="hero__copy">
+      <p class="hero__kicker">Grátis, sem cadastro, funciona no celular</p>
+      <h1 class="hero__title">Seu currículo pronto<br>para o PDF do recrutador.</h1>
+      <p class="hero__lead">Preencha os campos de um lado, veja a folha A4 se montar do outro. Troque o modelo, a cor e a fonte quantas vezes quiser — o que você escreveu continua lá.</p>
+      <div class="hero__cta">
+        <button class="btn btn--primary btn--lg" type="button" data-action="start">Começar do zero</button>
+        <button class="btn btn--quiet btn--lg" type="button" data-action="start-sample">Ver com exemplo preenchido</button>
+      </div>
+      <p class="hero__note" id="hero-resume-note" hidden>Você tem um currículo salvo neste navegador — continuamos de onde parou.</p>
+    </div>
+
+    <div class="hero__sheet" aria-hidden="true">
+      <div class="sheet">
+        <span class="sheet__bar sheet__bar--name"></span>
+        <span class="sheet__bar sheet__bar--role"></span>
+        <span class="sheet__rule"></span>
+        <span class="sheet__bar sheet__bar--l"></span>
+        <span class="sheet__bar sheet__bar--m"></span>
+        <span class="sheet__bar sheet__bar--s"></span>
+        <span class="sheet__rule"></span>
+        <span class="sheet__bar sheet__bar--m"></span>
+        <span class="sheet__bar sheet__bar--l"></span>
+        <span class="sheet__chip"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <article class="feature">
+      <h2 class="feature__title">6 modelos, do ATS ao criativo</h2>
+      <p>Um modelo preto e branco que passa nos sistemas de triagem automática, e outros cinco para quando quem lê é gente.</p>
+    </article>
+    <article class="feature">
+      <h2 class="feature__title">PDF em A4 de verdade</h2>
+      <p>210 × 297 mm, margem que você escolhe, quebra de página que não corta frase no meio.</p>
+    </article>
+    <article class="feature">
+      <h2 class="feature__title">Nada sai do seu aparelho</h2>
+      <p>Tudo fica salvo no navegador. Quer levar para outro computador? Baixe o arquivo JSON e importe lá.</p>
+    </article>
+  </section>
+</main>
+
+<!-- ====== Editor ====== -->
+<div class="editor" id="screen-editor" hidden>
+
+  <nav class="railnav" aria-label="Seções do currículo">
+    <ul class="railnav__list" id="rail-list"></ul>
+  </nav>
+
+  <!-- Coluna do formulário -->
+  <div class="pane pane--form" id="pane-form">
+    <form class="form" id="resume-form" autocomplete="on" novalidate>
+
+      <!-- Dados pessoais -->
+      <section class="panel" id="sec-personal" aria-labelledby="h-personal">
+        <h2 class="panel__title" id="h-personal">Dados pessoais</h2>
+
+        <div class="photo">
+          <div class="photo__preview">
+            <img id="photo-img" alt="Foto do currículo" hidden>
+            <span class="photo__empty" aria-hidden="true">Sem foto</span>
+          </div>
+          <div class="photo__controls">
+            <label class="btn btn--quiet btn--sm" for="f-photo">Enviar foto</label>
+            <input class="u-visually-hidden" type="file" id="f-photo" accept="image/*">
+            <button class="btn btn--quiet btn--sm" type="button" data-action="remove-photo">Remover</button>
+            <label class="switch">
+              <input type="checkbox" id="f-showPhoto" checked>
+              <span>Mostrar foto no currículo</span>
+            </label>
+            <div class="field field--inline">
+              <label for="f-photoZoom">Enquadramento</label>
+              <input type="range" id="f-photoZoom" min="100" max="220" value="100" step="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="f-name">Nome completo</label>
+            <input type="text" id="f-name" data-bind="personal.name" placeholder="Ana Beatriz Moura" required>
+          </div>
+          <div class="field">
+            <label for="f-title">Cargo desejado</label>
+            <input type="text" id="f-title" data-bind="personal.title" placeholder="Analista de Marketing Digital">
+          </div>
+          <div class="field">
+            <label for="f-email">E-mail</label>
+            <input type="email" id="f-email" data-bind="personal.email" placeholder="ana.moura@email.com">
+          </div>
+          <div class="field">
+            <label for="f-phone">Telefone</label>
+            <input type="tel" id="f-phone" data-bind="personal.phone" placeholder="(13) 99999-0000">
+          </div>
+          <div class="field">
+            <label for="f-city">Cidade / UF</label>
+            <input type="text" id="f-city" data-bind="personal.city" placeholder="Santos, SP">
+          </div>
+          <div class="field">
+            <label for="f-linkedin">LinkedIn</label>
+            <input type="text" id="f-linkedin" data-bind="personal.linkedin" placeholder="linkedin.com/in/anamoura">
+          </div>
+          <div class="field field--full">
+            <label for="f-website">Portfólio ou site</label>
+            <input type="text" id="f-website" data-bind="personal.website" placeholder="anamoura.com.br">
+          </div>
+        </div>
+      </section>
+
+      <!-- Resumo -->
+      <section class="panel" id="sec-summary" aria-labelledby="h-summary">
+        <h2 class="panel__title" id="h-summary">Resumo</h2>
+        <div class="field">
+          <label for="f-summary">Um parágrafo sobre você</label>
+          <textarea id="f-summary" data-bind="summary" rows="5" maxlength="900"
+            placeholder="Profissional de marketing com 6 anos de experiência em campanhas de performance…"></textarea>
+          <p class="field__hint" id="summary-counter" aria-live="polite">0 caracteres · o ideal fica entre 300 e 600</p>
+        </div>
+      </section>
+
+      <!-- Experiência -->
+      <section class="panel" id="sec-experience" aria-labelledby="h-experience">
+        <h2 class="panel__title" id="h-experience">Experiência profissional</h2>
+        <div class="list" id="list-experience" data-list="experience"></div>
+        <button class="btn btn--add" type="button" data-add="experience">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar experiência
+        </button>
+      </section>
+
+      <!-- Formação -->
+      <section class="panel" id="sec-education" aria-labelledby="h-education">
+        <h2 class="panel__title" id="h-education">Formação acadêmica</h2>
+        <div class="list" id="list-education" data-list="education"></div>
+        <button class="btn btn--add" type="button" data-add="education">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar formação
+        </button>
+      </section>
+
+      <!-- Habilidades -->
+      <section class="panel" id="sec-skills" aria-labelledby="h-skills">
+        <h2 class="panel__title" id="h-skills">Habilidades</h2>
+        <div class="list" id="list-skills" data-list="skills"></div>
+        <button class="btn btn--add" type="button" data-add="skills">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar habilidade
+        </button>
+      </section>
+
+      <!-- Idiomas -->
+      <section class="panel" id="sec-languages" aria-labelledby="h-languages">
+        <h2 class="panel__title" id="h-languages">Idiomas</h2>
+        <div class="list" id="list-languages" data-list="languages"></div>
+        <button class="btn btn--add" type="button" data-add="languages">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar idioma
+        </button>
+      </section>
+
+      <!-- Cursos -->
+      <section class="panel" id="sec-courses" aria-labelledby="h-courses">
+        <h2 class="panel__title" id="h-courses">Cursos e certificações</h2>
+        <div class="list" id="list-courses" data-list="courses"></div>
+        <button class="btn btn--add" type="button" data-add="courses">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar curso
+        </button>
+      </section>
+
+      <!-- Seções livres -->
+      <section class="panel" id="sec-custom" aria-labelledby="h-custom">
+        <h2 class="panel__title" id="h-custom">Seções livres</h2>
+        <p class="panel__hint">Projetos, voluntariado, publicações, referências — o título é seu.</p>
+        <div class="list" id="list-custom" data-list="custom"></div>
+        <button class="btn btn--add" type="button" data-add="custom">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar seção
+        </button>
+      </section>
+
+      <!-- Modelos -->
+      <section class="panel" id="sec-templates" aria-labelledby="h-templates">
+        <h2 class="panel__title" id="h-templates">Modelos</h2>
+        <div class="templates" id="template-grid" role="radiogroup" aria-labelledby="h-templates"></div>
+      </section>
+
+      <!-- Cores e tipografia -->
+      <section class="panel" id="sec-style" aria-labelledby="h-style">
+        <h2 class="panel__title" id="h-style">Cores e tipografia</h2>
+
+        <fieldset class="fieldset">
+          <legend>Paleta</legend>
+          <div class="palettes" id="palette-grid" role="radiogroup" aria-label="Paletas de cor"></div>
+          <div class="grid grid--2">
+            <div class="field">
+              <label for="f-primary">Cor principal</label>
+              <input type="color" id="f-primary" data-bind="settings.primary" value="#1f6f5c">
+            </div>
+            <div class="field">
+              <label for="f-secondary">Cor de apoio</label>
+              <input type="color" id="f-secondary" data-bind="settings.secondary" value="#2f3a3a">
+            </div>
+          </div>
+          <p class="contrast" id="contrast-note" role="status"></p>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Fonte</legend>
+          <div class="field">
+            <label for="f-font">Família</label>
+            <select id="f-font" data-bind="settings.font">
+              <option value="Inter">Inter — sem serifa, neutra</option>
+              <option value="Lato">Lato — sem serifa, humanista</option>
+              <option value="Poppins">Poppins — sem serifa, geométrica</option>
+              <option value="Source Serif 4">Source Serif — serifada, moderna</option>
+              <option value="Merriweather">Merriweather — serifada, robusta</option>
+              <option value="Georgia">Georgia — serifada, do sistema</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="field__label">Tamanho do texto</span>
+            <div class="segmented" id="size-group" role="radiogroup" aria-label="Tamanho do texto">
+              <button type="button" role="radio" data-size="s" aria-checked="false">P</button>
+              <button type="button" role="radio" data-size="m" aria-checked="true">M</button>
+              <button type="button" role="radio" data-size="l" aria-checked="false">G</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-margin">Margem da página: <output id="margin-out">15</output> mm</label>
+            <input type="range" id="f-margin" data-bind="settings.margin" min="8" max="25" step="1" value="15">
+          </div>
+        </fieldset>
+      </section>
+
+      <p class="form__end">Tudo salvo automaticamente neste navegador.</p>
+    </form>
+  </div>
+
+  <!-- Coluna do preview -->
+  <div class="pane pane--preview" id="pane-preview">
+    <div class="preview">
+      <div class="preview__toolbar">
+        <div class="zoom" role="group" aria-label="Zoom do preview">
+          <button class="btn btn--quiet btn--sm" type="button" data-zoom="-1" aria-label="Diminuir zoom">−</button>
+          <span id="zoom-out-label">Ajustar</span>
+          <button class="btn btn--quiet btn--sm" type="button" data-zoom="1" aria-label="Aumentar zoom">+</button>
+        </div>
+        <p class="preview__meta" id="page-count" aria-live="polite">1 página</p>
+      </div>
+
+      <div class="preview__stage" id="preview-stage">
+        <div class="preview__scaler" id="preview-scaler">
+          <article class="cv-page" id="cv-page" aria-label="Pré-visualização do currículo"></article>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abas do celular -->
+  <nav class="tabbar" aria-label="Seções do editor">
+    <button class="tabbar__btn is-active" type="button" data-tab="edit">
+      <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg><span>Editar</span>
+    </button>
+    <button class="tabbar__btn" type="button" data-tab="preview">
+      <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg><span>Visualizar</span>
+    </button>
+    <button class="tabbar__btn" type="button" data-tab="templates">
+      <svg class="icon" aria-hidden="true"><use href="#i-layout"></use></svg><span>Modelos</span>
+    </button>
+    <button class="tabbar__btn" type="button" data-tab="style">
+      <svg class="icon" aria-hidden="true"><use href="#i-palette"></use></svg><span>Cores</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ====== Rodapé (nunca entra no PDF) ====== -->
+<footer class="credits">
+  <p class="credits__text">Desenvolvido por <strong>Henrique Ponchi</strong></p>
+  <ul class="credits__links">
+    <li><a class="credits__link credits__link--wa" href="https://wa.me/5513996341796" target="_blank" rel="noopener" aria-label="WhatsApp de Henrique Ponchi"><svg class="icon" aria-hidden="true"><use href="#i-whatsapp"></use></svg></a></li>
+    <li><a class="credits__link credits__link--ig" href="https://instagram.com/henriponchi" target="_blank" rel="noopener" aria-label="Instagram de Henrique Ponchi"><svg class="icon" aria-hidden="true"><use href="#i-instagram"></use></svg></a></li>
+    <li><a class="credits__link credits__link--gh" href="https://github.com/HenriquePonchi" target="_blank" rel="noopener" aria-label="GitHub de Henrique Ponchi"><svg class="icon" aria-hidden="true"><use href="#i-github"></use></svg></a></li>
+  </ul>
+</footer>
+
+<!-- ====== Modal genérico ====== -->
+<div class="modal" id="modal" hidden>
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+    <h2 class="modal__title" id="modal-title"></h2>
+    <p class="modal__text" id="modal-text"></p>
+    <div class="modal__actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="overlay" id="busy" hidden><div class="overlay__box"><span class="spinner" aria-hidden="true"></span><p id="busy-text">Gerando o PDF…</p></div></div>
+
+<input type="file" id="import-file" accept="application/json,.json" class="u-visually-hidden">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script>
+/* =============================================================
+   Vitae — camada de dados.
+   Responsabilidade única: forma do estado, persistência e
+   import/export. Não sabe nada sobre DOM nem sobre templates.
+   Exposto em window.CVStorage.
+   ============================================================= */
+(function (global) {
+  'use strict';
+
+  var KEY = 'vitae.resume.v1';
+  var KEY_UI = 'vitae.ui.v1';
+  var SAVE_DELAY = 500; // ms — debounce pedido no briefing
+
+  /* ---------- Estado padrão ---------- */
+  function emptyState() {
+    return {
+      version: 1,
+      personal: {
+        photo: '',        // dataURL
+        photoZoom: 100,   // % de enquadramento
+        name: '',
+        title: '',
+        email: '',
+        phone: '',
+        city: '',
+        linkedin: '',
+        website: ''
+      },
+      summary: '',
+      experience: [],
+      education: [],
+      skills: [],
+      languages: [],
+      courses: [],
+      custom: [],
+      settings: {
+        template: 'moderno',
+        primary: '#1f6f5c',
+        secondary: '#2f3a3a',
+        font: 'Inter',
+        size: 'm',       // s | m | l
+        margin: 15,      // mm
+        showPhoto: true
+      }
+    };
+  }
+
+  /* ---------- Itens em branco por tipo de lista ---------- */
+  var BLANKS = {
+    experience: function () {
+      return { company: '', role: '', start: '', end: '', current: false, description: '' };
+    },
+    education: function () {
+      return { school: '', course: '', level: 'Graduação', start: '', end: '' };
+    },
+    skills: function () { return { name: '', level: 4 }; },
+    languages: function () { return { name: '', level: 'Intermediário' }; },
+    courses: function () { return { name: '', org: '', year: '' }; },
+    custom: function () { return { title: '', content: '' }; }
+  };
+
+  function blankItem(listName) {
+    var make = BLANKS[listName];
+    return make ? make() : {};
+  }
+
+  /* ---------- Normalização ---------- */
+  /* Mescla o que veio do storage/JSON sobre o padrão, campo a campo,
+     para que uma versão antiga do arquivo nunca deixe o app sem chave. */
+  function normalize(raw) {
+    var base = emptyState();
+    if (!raw || typeof raw !== 'object') return base;
+
+    ['personal', 'settings'].forEach(function (group) {
+      if (raw[group] && typeof raw[group] === 'object') {
+        Object.keys(base[group]).forEach(function (k) {
+          if (raw[group][k] !== undefined && raw[group][k] !== null) {
+            base[group][k] = raw[group][k];
+          }
+        });
+      }
+    });
+
+    if (typeof raw.summary === 'string') base.summary = raw.summary;
+
+    Object.keys(BLANKS).forEach(function (listName) {
+      if (!Array.isArray(raw[listName])) return;
+      base[listName] = raw[listName].map(function (item) {
+        var blank = blankItem(listName);
+        if (item && typeof item === 'object') {
+          Object.keys(blank).forEach(function (k) {
+            if (item[k] !== undefined && item[k] !== null) blank[k] = item[k];
+          });
+        }
+        return blank;
+      });
+    });
+
+    base.settings.margin = clamp(Number(base.settings.margin) || 15, 8, 25);
+    if (['s', 'm', 'l'].indexOf(base.settings.size) === -1) base.settings.size = 'm';
+    base.settings.showPhoto = base.settings.showPhoto !== false;
+    base.personal.photoZoom = clamp(Number(base.personal.photoZoom) || 100, 100, 220);
+
+    return base;
+  }
+
+  function clamp(n, min, max) { return Math.min(max, Math.max(min, n)); }
+
+  /* ---------- Persistência ---------- */
+  function load() {
+    try {
+      var raw = global.localStorage.getItem(KEY);
+      return raw ? normalize(JSON.parse(raw)) : null;
+    } catch (err) {
+      console.warn('[Vitae] não foi possível ler o currículo salvo:', err);
+      return null;
+    }
+  }
+
+  var saveTimer = null;
+  var lastError = null;
+
+  function saveNow(state) {
+    try {
+      global.localStorage.setItem(KEY, JSON.stringify(state));
+      lastError = null;
+      return true;
+    } catch (err) {
+      // Cota estourada costuma ser a foto em base64.
+      lastError = err;
+      console.warn('[Vitae] não foi possível salvar:', err);
+      return false;
+    }
+  }
+
+  function save(state, onDone) {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      saveTimer = null;
+      var ok = saveNow(state);
+      if (typeof onDone === 'function') onDone(ok, lastError);
+    }, SAVE_DELAY);
+  }
+
+  function flush(state) {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+    return saveNow(state);
+  }
+
+  function clear() {
+    try { global.localStorage.removeItem(KEY); } catch (err) { /* ignora */ }
+  }
+
+  /* ---------- Preferências de interface (tema, zoom) ---------- */
+  function loadUI() {
+    try { return JSON.parse(global.localStorage.getItem(KEY_UI)) || {}; }
+    catch (err) { return {}; }
+  }
+  function saveUI(patch) {
+    try {
+      var next = Object.assign(loadUI(), patch);
+      global.localStorage.setItem(KEY_UI, JSON.stringify(next));
+    } catch (err) { /* ignora */ }
+  }
+
+  /* ---------- Import / export JSON ---------- */
+  function toJSON(state) {
+    return JSON.stringify(state, null, 2);
+  }
+
+  function download(filename, content, mime) {
+    var blob = new Blob([content], { type: mime || 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function readFile(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () { resolve(String(reader.result)); };
+      reader.onerror = function () { reject(new Error('Não foi possível ler o arquivo.')); };
+      reader.readAsText(file);
+    });
+  }
+
+  function importJSON(text) {
+    var parsed = JSON.parse(text); // deixa o erro subir: quem chama mostra a mensagem
+    if (!parsed || typeof parsed !== 'object') throw new Error('Formato inesperado.');
+    return normalize(parsed);
+  }
+
+  /* ---------- Currículo de exemplo ---------- */
+  function sampleState() {
+    var s = emptyState();
+    s.personal = Object.assign(s.personal, {
+      name: 'Ana Beatriz Moura',
+      title: 'Analista de Marketing Digital',
+      email: 'ana.moura@email.com',
+      phone: '(13) 99999-0000',
+      city: 'Santos, SP',
+      linkedin: 'linkedin.com/in/anabmoura',
+      website: 'anamoura.com.br'
+    });
+    s.summary = 'Analista de marketing com 6 anos em campanhas de performance para e-commerce. '
+      + 'Já administrei verbas de até R$ 400 mil por mês em Google Ads e Meta Ads, com foco em '
+      + 'reduzir o custo por aquisição sem perder volume. Gosto de trabalhar perto do time de '
+      + 'produto e de decidir por dado, não por palpite.';
+    s.experience = [
+      {
+        company: 'Loja Marear', role: 'Analista de marketing pleno',
+        start: '03/2022', end: '', current: true,
+        description: 'Reduzi o custo por aquisição em 34% em oito meses, ajustando públicos e criativos.\n'
+          + 'Montei o painel de métricas que o time comercial usa toda segunda-feira.\n'
+          + 'Coordenei duas campanhas de Black Friday com verba de R$ 400 mil/mês.'
+      },
+      {
+        company: 'Agência Nortear', role: 'Assistente de mídia paga',
+        start: '01/2020', end: '02/2022', current: false,
+        description: 'Atendi 11 contas simultâneas de varejo e serviços.\n'
+          + 'Criei o modelo de relatório mensal adotado pela agência inteira.'
+      }
+    ];
+    s.education = [
+      { school: 'Universidade Católica de Santos', course: 'Publicidade e Propaganda', level: 'Graduação', start: '2015', end: '2019' }
+    ];
+    s.skills = [
+      { name: 'Google Ads', level: 5 },
+      { name: 'Meta Ads', level: 5 },
+      { name: 'Google Analytics 4', level: 4 },
+      { name: 'SQL básico', level: 3 },
+      { name: 'Looker Studio', level: 4 }
+    ];
+    s.languages = [
+      { name: 'Português', level: 'Nativo' },
+      { name: 'Inglês', level: 'Avançado' },
+      { name: 'Espanhol', level: 'Intermediário' }
+    ];
+    s.courses = [
+      { name: 'Google Ads Search Certification', org: 'Google Skillshop', year: '2024' },
+      { name: 'Análise de dados com SQL', org: 'Alura', year: '2023' }
+    ];
+    s.custom = [
+      { title: 'Voluntariado', content: 'Mentoria de marketing para pequenos negócios do Mercado do Peixe, em Santos (2023–2024).' }
+    ];
+    return s;
+  }
+
+  /* ---------- API pública ---------- */
+  global.CVStorage = {
+    KEY: KEY,
+    emptyState: emptyState,
+    sampleState: sampleState,
+    blankItem: blankItem,
+    normalize: normalize,
+    load: load,
+    save: save,
+    flush: flush,
+    clear: clear,
+    loadUI: loadUI,
+    saveUI: saveUI,
+    toJSON: toJSON,
+    importJSON: importJSON,
+    readFile: readFile,
+    download: download,
+    clamp: clamp
+  };
+})(window);
+
+</script>
+<script>
+/* =============================================================
+   Vitae — modelos de currículo.
+   Cada modelo devolve HTML + CSS próprios. Nada aqui toca o
+   estado nem o DOM da aplicação: entra `state`, sai string.
+   Exposto em window.CVTemplates.
+   ============================================================= */
+(function (global) {
+  'use strict';
+
+  /* ---------- utilitários de texto ---------- */
+
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function has(value) {
+    return typeof value === 'string' ? value.trim() !== '' : !!value;
+  }
+
+  /* Quebra a descrição em bullets: uma linha, um item. */
+  function bullets(text) {
+    if (!has(text)) return '';
+    var lines = String(text).split(/\r?\n/)
+      .map(function (l) { return l.replace(/^[-•*\u2022]\s*/, '').trim(); })
+      .filter(function (l) { return l !== ''; });
+    if (!lines.length) return '';
+    return '<ul class="cv-bullets">' + lines.map(function (l) {
+      return '<li>' + esc(l) + '</li>';
+    }).join('') + '</ul>';
+  }
+
+  /* Parágrafos livres (seções customizadas). */
+  function paragraphs(text) {
+    if (!has(text)) return '';
+    return String(text).split(/\r?\n+/).filter(function (l) { return l.trim(); })
+      .map(function (l) { return '<p class="cv-p">' + esc(l.trim()) + '</p>'; }).join('');
+  }
+
+  function period(item) {
+    var start = has(item.start) ? esc(item.start) : '';
+    var end = item.current ? 'atual' : (has(item.end) ? esc(item.end) : '');
+    if (start && end) return start + ' – ' + end;
+    return start || end || '';
+  }
+
+  /* Listas não vazias: o modelo nunca imprime uma seção fantasma. */
+  function filled(list, keys) {
+    if (!Array.isArray(list)) return [];
+    return list.filter(function (item) {
+      return keys.some(function (k) { return has(item[k]); });
+    });
+  }
+
+  function contactItems(p) {
+    var out = [];
+    if (has(p.email)) out.push({ k: 'email', v: p.email });
+    if (has(p.phone)) out.push({ k: 'phone', v: p.phone });
+    if (has(p.city)) out.push({ k: 'city', v: p.city });
+    if (has(p.linkedin)) out.push({ k: 'linkedin', v: p.linkedin });
+    if (has(p.website)) out.push({ k: 'website', v: p.website });
+    return out;
+  }
+
+  function photoTag(state, cls) {
+    var p = state.personal;
+    if (!state.settings.showPhoto || !has(p.photo)) return '';
+    var zoom = Number(p.photoZoom) || 100;
+    return '<div class="' + cls + '"><img src="' + esc(p.photo) + '" alt="Foto de '
+      + esc(p.name || 'candidato') + '" style="transform:scale(' + (zoom / 100) + ')"></div>';
+  }
+
+  function levelDots(n, total) {
+    var out = '';
+    for (var i = 1; i <= (total || 5); i++) {
+      out += '<span class="cv-dot' + (i <= n ? ' is-on' : '') + '"></span>';
+    }
+    return '<span class="cv-dots">' + out + '</span>';
+  }
+
+  function levelBar(n, total) {
+    var pct = Math.round((n / (total || 5)) * 100);
+    return '<span class="cv-bar"><span class="cv-bar__fill" style="width:' + pct + '%"></span></span>';
+  }
+
+  /* ---------- blocos reutilizáveis ---------- */
+
+  function sectionTitle(text) {
+    return '<h2 class="cv-section-title">' + esc(text) + '</h2>';
+  }
+
+  function experienceEntries(list, opts) {
+    opts = opts || {};
+    return list.map(function (item) {
+      var head = '<div class="cv-entry__head">'
+        + '<div><h3 class="cv-entry__role">' + esc(item.role || '') + '</h3>'
+        + (has(item.company) ? '<p class="cv-entry__org">' + esc(item.company) + '</p>' : '')
+        + '</div>'
+        + (period(item) ? '<span class="cv-entry__when">' + period(item) + '</span>' : '')
+        + '</div>';
+      return '<article class="cv-entry' + (opts.timeline ? ' cv-entry--timeline' : '') + '">'
+        + head + bullets(item.description) + '</article>';
+    }).join('');
+  }
+
+  function educationEntries(list) {
+    return list.map(function (item) {
+      return '<article class="cv-entry">'
+        + '<div class="cv-entry__head">'
+        + '<div><h3 class="cv-entry__role">' + esc(item.course || '') + '</h3>'
+        + '<p class="cv-entry__org">' + esc([item.school, item.level].filter(has).join(' · ')) + '</p></div>'
+        + (period(item) ? '<span class="cv-entry__when">' + period(item) + '</span>' : '')
+        + '</div></article>';
+    }).join('');
+  }
+
+  function courseEntries(list) {
+    return '<ul class="cv-plain">' + list.map(function (item) {
+      var meta = [item.org, item.year].filter(has).map(esc).join(' · ');
+      return '<li><strong>' + esc(item.name || '') + '</strong>'
+        + (meta ? '<span class="cv-plain__meta">' + meta + '</span>' : '') + '</li>';
+    }).join('') + '</ul>';
+  }
+
+  function languageEntries(list) {
+    return '<ul class="cv-plain">' + list.map(function (item) {
+      return '<li><strong>' + esc(item.name || '') + '</strong>'
+        + (has(item.level) ? '<span class="cv-plain__meta">' + esc(item.level) + '</span>' : '') + '</li>';
+    }).join('') + '</ul>';
+  }
+
+  function skillList(list, style) {
+    if (style === 'tags') {
+      return '<div class="cv-tags">' + list.map(function (s) {
+        return '<span class="cv-tag">' + esc(s.name) + '</span>';
+      }).join('') + '</div>';
+    }
+    return '<ul class="cv-skills">' + list.map(function (s) {
+      var gauge = style === 'dots' ? levelDots(s.level) : levelBar(s.level);
+      return '<li class="cv-skill"><span class="cv-skill__name">' + esc(s.name) + '</span>' + gauge + '</li>';
+    }).join('') + '</ul>';
+  }
+
+  function customBlocks(list) {
+    return list.map(function (c) {
+      return '<section class="cv-block">' + sectionTitle(c.title || 'Outros') + paragraphs(c.content) + '</section>';
+    }).join('');
+  }
+
+  /* Coleta o conteúdo já filtrado uma única vez por render. */
+  function collect(state) {
+    return {
+      personal: state.personal,
+      summary: state.summary,
+      experience: filled(state.experience, ['company', 'role', 'description']),
+      education: filled(state.education, ['school', 'course']),
+      skills: filled(state.skills, ['name']),
+      languages: filled(state.languages, ['name']),
+      courses: filled(state.courses, ['name']),
+      custom: filled(state.custom, ['title', 'content']),
+      contacts: contactItems(state.personal)
+    };
+  }
+
+  function contactLine(contacts, sep) {
+    return contacts.map(function (c) { return esc(c.v); }).join(sep || ' · ');
+  }
+
+  /* =============================================================
+     CSS base — vale para todos os modelos.
+     Medidas em mm/px reais: é este elemento que vira o PDF.
+     ============================================================= */
+  var BASE_CSS = [
+    '.cv-page{',
+    '  font-family: var(--cv-font);',
+    '  font-size: var(--cv-fs);',
+    '  line-height: 1.45;',
+    '  color: #1e2124;',
+    '  --cv-pad: var(--cv-margin);',
+    '}',
+    '.cv-page *{box-sizing:border-box;}',
+    '.cv-page h1,.cv-page h2,.cv-page h3,.cv-page p,.cv-page ul{margin:0;padding:0;}',
+    '.cv-page ul{list-style:none;}',
+    '.cv-name{font-size:2.05em;line-height:1.08;font-weight:700;letter-spacing:-.015em;}',
+    '.cv-role{font-size:1.06em;font-weight:500;}',
+    '.cv-section-title{font-size:.86em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cv-primary);margin-bottom:.55em;}',
+    '.cv-block + .cv-block{margin-top:1.25em;}',
+    '.cv-entry + .cv-entry{margin-top:.85em;}',
+    '.cv-entry__head{display:flex;justify-content:space-between;align-items:baseline;gap:1em;}',
+    '.cv-entry__role{font-size:1em;font-weight:700;}',
+    '.cv-entry__org{font-size:.94em;color:#4a5057;}',
+    '.cv-entry__when{font-size:.85em;color:#6b7178;white-space:nowrap;}',
+    '.cv-bullets{margin-top:.35em;}',
+    '.cv-bullets li{position:relative;padding-left:1em;margin-bottom:.16em;}',
+    '.cv-bullets li::before{content:"";position:absolute;left:0;top:.62em;width:4px;height:4px;border-radius:50%;background:var(--cv-primary);}',
+    '.cv-p + .cv-p{margin-top:.35em;}',
+    '.cv-plain li{display:flex;justify-content:space-between;gap:.8em;margin-bottom:.22em;}',
+    '.cv-plain strong{font-weight:600;}',
+    '.cv-plain__meta{color:#6b7178;font-size:.9em;text-align:right;}',
+    '.cv-skill{display:flex;align-items:center;justify-content:space-between;gap:.7em;margin-bottom:.34em;}',
+    '.cv-skill__name{flex:1;min-width:0;}',
+    '.cv-dots{display:flex;gap:3px;flex:none;}',
+    '.cv-dot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.16);}',
+    '.cv-dot.is-on{background:var(--cv-primary);}',
+    '.cv-bar{flex:none;width:34%;height:4px;border-radius:2px;background:rgba(0,0,0,.12);overflow:hidden;}',
+    '.cv-bar__fill{display:block;height:100%;background:var(--cv-primary);}',
+    '.cv-tags{display:flex;flex-wrap:wrap;gap:.3em .4em;}',
+    '.cv-tag{border:1px solid rgba(0,0,0,.16);border-radius:3px;padding:.12em .5em;font-size:.9em;}',
+    '.cv-summary{color:#33383d;}',
+    '.cv-photo img{width:100%;height:100%;object-fit:cover;display:block;}',
+    '.cv-photo{overflow:hidden;background:rgba(0,0,0,.06);}'
+  ].join('\n');
+
+  /* =============================================================
+     1. MODERNO — faixa colorida + coluna lateral
+     ============================================================= */
+  var moderno = {
+    id: 'moderno',
+    name: 'Moderno',
+    tag: 'Faixa colorida e lateral',
+    css: [
+      '.cv--moderno .cv-head{background:var(--cv-primary);color:#fff;padding:calc(var(--cv-pad) * .72) var(--cv-pad);display:flex;align-items:center;gap:6mm;}',
+      '.cv--moderno .cv-head__photo{width:26mm;height:26mm;border-radius:50%;border:2px solid rgba(255,255,255,.55);flex:none;}',
+      '.cv--moderno .cv-head .cv-role{opacity:.9;margin-top:.15em;}',
+      '.cv--moderno .cv-body{display:flex;align-items:stretch;min-height:calc(297mm - 42mm);}',
+      '.cv--moderno .cv-aside{width:34%;flex:none;background:var(--cv-tint);padding:calc(var(--cv-pad) * .8) calc(var(--cv-pad) * .7);}',
+      '.cv--moderno .cv-main{flex:1;min-width:0;padding:calc(var(--cv-pad) * .8) var(--cv-pad);}',
+      '.cv--moderno .cv-contact li{margin-bottom:.32em;word-break:break-word;}',
+      '.cv--moderno .cv-contact .cv-contact__k{display:block;font-size:.78em;color:var(--cv-secondary);letter-spacing:.04em;}'
+    ].join('\n'),
+    render: function (d, state) {
+      var aside = '';
+      if (d.contacts.length) {
+        aside += '<section class="cv-block">' + sectionTitle('Contato')
+          + '<ul class="cv-contact">' + d.contacts.map(function (c) {
+            return '<li><span class="cv-contact__k">' + labelOf(c.k) + '</span>' + esc(c.v) + '</li>';
+          }).join('') + '</ul></section>';
+      }
+      if (d.skills.length) aside += '<section class="cv-block">' + sectionTitle('Habilidades') + skillList(d.skills, 'bar') + '</section>';
+      if (d.languages.length) aside += '<section class="cv-block">' + sectionTitle('Idiomas') + languageEntries(d.languages) + '</section>';
+      if (d.courses.length) aside += '<section class="cv-block">' + sectionTitle('Cursos') + courseEntries(d.courses) + '</section>';
+
+      var main = '';
+      if (has(d.summary)) main += '<section class="cv-block">' + sectionTitle('Resumo') + '<p class="cv-summary">' + esc(d.summary) + '</p></section>';
+      if (d.experience.length) main += '<section class="cv-block">' + sectionTitle('Experiência profissional') + experienceEntries(d.experience) + '</section>';
+      if (d.education.length) main += '<section class="cv-block">' + sectionTitle('Formação acadêmica') + educationEntries(d.education) + '</section>';
+      main += customBlocks(d.custom);
+
+      return '<header class="cv-head">'
+        + photoTag(state, 'cv-photo cv-head__photo')
+        + '<div><h1 class="cv-name">' + esc(d.personal.name || 'Seu nome') + '</h1>'
+        + (has(d.personal.title) ? '<p class="cv-role">' + esc(d.personal.title) + '</p>' : '')
+        + '</div></header>'
+        + '<div class="cv-body"><aside class="cv-aside">' + aside + '</aside>'
+        + '<div class="cv-main">' + main + '</div></div>';
+    }
+  };
+
+  function labelOf(key) {
+    return { email: 'E-mail', phone: 'Telefone', city: 'Local', linkedin: 'LinkedIn', website: 'Site' }[key] || '';
+  }
+
+  /* =============================================================
+     2. CLÁSSICO — coluna única, sem gráficos, legível por ATS
+     ============================================================= */
+  var classico = {
+    id: 'classico',
+    name: 'Clássico',
+    tag: 'Aprovado por ATS',
+    css: [
+      '.cv--classico{padding:var(--cv-pad);}',
+      '.cv--classico .cv-head{text-align:center;padding-bottom:.8em;border-bottom:1.5px solid #222;}',
+      '.cv--classico .cv-name{font-size:1.9em;letter-spacing:0;}',
+      '.cv--classico .cv-role{font-weight:600;color:#333;margin-top:.1em;}',
+      '.cv--classico .cv-contactline{margin-top:.45em;font-size:.92em;color:#3a3f45;}',
+      '.cv--classico .cv-block{margin-top:1.2em;}',
+      '.cv--classico .cv-section-title{color:#111;border-bottom:1px solid #999;padding-bottom:.25em;letter-spacing:.06em;}',
+      '.cv--classico .cv-bullets li::before{background:#444;}',
+      '.cv--classico .cv-entry__when{color:#3a3f45;}'
+    ].join('\n'),
+    render: function (d) {
+      var out = '<header class="cv-head"><h1 class="cv-name">' + esc(d.personal.name || 'Seu nome') + '</h1>'
+        + (has(d.personal.title) ? '<p class="cv-role">' + esc(d.personal.title) + '</p>' : '')
+        + (d.contacts.length ? '<p class="cv-contactline">' + contactLine(d.contacts, ' | ') + '</p>' : '')
+        + '</header>';
+      if (has(d.summary)) out += '<section class="cv-block">' + sectionTitle('Resumo profissional') + '<p class="cv-summary">' + esc(d.summary) + '</p></section>';
+      if (d.experience.length) out += '<section class="cv-block">' + sectionTitle('Experiência profissional') + experienceEntries(d.experience) + '</section>';
+      if (d.education.length) out += '<section class="cv-block">' + sectionTitle('Formação acadêmica') + educationEntries(d.education) + '</section>';
+      if (d.skills.length) {
+        out += '<section class="cv-block">' + sectionTitle('Habilidades') + '<p>'
+          + d.skills.map(function (s) { return esc(s.name); }).join(', ') + '</p></section>';
+      }
+      if (d.languages.length) {
+        out += '<section class="cv-block">' + sectionTitle('Idiomas') + '<p>'
+          + d.languages.map(function (l) { return esc(l.name) + (has(l.level) ? ' (' + esc(l.level) + ')' : ''); }).join(', ')
+          + '</p></section>';
+      }
+      if (d.courses.length) out += '<section class="cv-block">' + sectionTitle('Cursos e certificações') + courseEntries(d.courses) + '</section>';
+      out += customBlocks(d.custom);
+      return out;
+    }
+  };
+
+  /* =============================================================
+     3. CRIATIVO — foto sobreposta, linha do tempo, tags
+     ============================================================= */
+  var criativo = {
+    id: 'criativo',
+    name: 'Criativo',
+    tag: 'Linha do tempo',
+    css: [
+      '.cv--criativo .cv-head{background:linear-gradient(120deg,var(--cv-primary),var(--cv-secondary));color:#fff;padding:calc(var(--cv-pad) * .9) var(--cv-pad) calc(var(--cv-pad) * .7);}',
+      '.cv--criativo .cv-head__row{display:flex;gap:6mm;align-items:center;}',
+      '.cv--criativo .cv-head__photo{width:28mm;height:28mm;border-radius:14px;flex:none;box-shadow:0 6px 18px rgba(0,0,0,.25);}',
+      '.cv--criativo .cv-contactline{margin-top:.6em;font-size:.9em;opacity:.92;}',
+      '.cv--criativo .cv-main{padding:calc(var(--cv-pad) * .85) var(--cv-pad);}',
+      '.cv--criativo .cv-cols{display:flex;gap:7mm;margin-top:1.25em;}',
+      '.cv--criativo .cv-cols > *{flex:1;min-width:0;}',
+      '.cv--criativo .cv-timeline{position:relative;padding-left:5.5mm;border-left:2px solid var(--cv-tint-strong);}',
+      '.cv--criativo .cv-entry--timeline{position:relative;}',
+      '.cv--criativo .cv-entry--timeline::before{content:"";position:absolute;left:-6.9mm;top:.42em;width:7px;height:7px;border-radius:50%;background:var(--cv-primary);box-shadow:0 0 0 3px #fff;}',
+      '.cv--criativo .cv-entry + .cv-entry{margin-top:1em;}',
+      '.cv--criativo .cv-tag{background:var(--cv-tint);border-color:transparent;color:var(--cv-secondary);border-radius:999px;padding:.18em .7em;}'
+    ].join('\n'),
+    render: function (d, state) {
+      var out = '<header class="cv-head"><div class="cv-head__row">'
+        + photoTag(state, 'cv-photo cv-head__photo')
+        + '<div><h1 class="cv-name">' + esc(d.personal.name || 'Seu nome') + '</h1>'
+        + (has(d.personal.title) ? '<p class="cv-role">' + esc(d.personal.title) + '</p>' : '')
+        + (d.contacts.length ? '<p class="cv-contactline">' + contactLine(d.contacts) + '</p>' : '')
+        + '</div></div></header><div class="cv-main">';
+
+      if (has(d.summary)) out += '<section class="cv-block">' + sectionTitle('Sobre') + '<p class="cv-summary">' + esc(d.summary) + '</p></section>';
+      if (d.experience.length) {
+        out += '<section class="cv-block">' + sectionTitle('Trajetória')
+          + '<div class="cv-timeline">' + experienceEntries(d.experience, { timeline: true }) + '</div></section>';
+      }
+
+      var colA = '', colB = '';
+      if (d.education.length) colA += '<section class="cv-block">' + sectionTitle('Formação') + educationEntries(d.education) + '</section>';
+      if (d.courses.length) colA += '<section class="cv-block">' + sectionTitle('Cursos') + courseEntries(d.courses) + '</section>';
+      if (d.skills.length) colB += '<section class="cv-block">' + sectionTitle('Habilidades') + skillList(d.skills, 'tags') + '</section>';
+      if (d.languages.length) colB += '<section class="cv-block">' + sectionTitle('Idiomas') + languageEntries(d.languages) + '</section>';
+      if (colA || colB) out += '<div class="cv-cols"><div>' + colA + '</div><div>' + colB + '</div></div>';
+
+      out += customBlocks(d.custom) + '</div>';
+      return out;
+    }
+  };
+
+  /* =============================================================
+     4. MINIMALISTA — respiro, título da seção na coluna estreita
+     ============================================================= */
+  var minimalista = {
+    id: 'minimalista',
+    name: 'Minimalista',
+    tag: 'Espaço e tipografia',
+    css: [
+      '.cv--minimalista{padding:calc(var(--cv-pad) * 1.5) calc(var(--cv-pad) * 1.15);}',
+      '.cv--minimalista .cv-head{display:flex;gap:7mm;align-items:flex-end;margin-bottom:2.2em;}',
+      '.cv--minimalista .cv-head__photo{width:24mm;height:24mm;border-radius:50%;flex:none;}',
+      '.cv--minimalista .cv-name{font-size:2.6em;font-weight:600;letter-spacing:-.03em;}',
+      '.cv--minimalista .cv-role{color:var(--cv-primary);font-weight:500;margin-top:.2em;}',
+      '.cv--minimalista .cv-contactline{margin-top:.7em;font-size:.88em;color:#63696f;}',
+      '.cv--minimalista .cv-block{display:flex;gap:6mm;padding-top:1.4em;border-top:1px solid #e8e6e0;margin-top:1.4em;}',
+      '.cv--minimalista .cv-block:first-of-type{border-top:0;margin-top:0;padding-top:0;}',
+      '.cv--minimalista .cv-section-title{flex:none;width:30mm;text-transform:none;letter-spacing:0;font-size:.92em;font-weight:600;color:#9aa0a6;margin:0;}',
+      '.cv--minimalista .cv-block > :not(.cv-section-title){flex:1;min-width:0;}',
+      '.cv--minimalista .cv-bullets li::before{background:#c2c6ca;}',
+      '.cv--minimalista .cv-entry + .cv-entry{margin-top:1.1em;}'
+    ].join('\n'),
+    render: function (d, state) {
+      function block(title, body) {
+        return body ? '<section class="cv-block">' + sectionTitle(title) + '<div>' + body + '</div></section>' : '';
+      }
+      var out = '<header class="cv-head">'
+        + photoTag(state, 'cv-photo cv-head__photo')
+        + '<div><h1 class="cv-name">' + esc(d.personal.name || 'Seu nome') + '</h1>'
+        + (has(d.personal.title) ? '<p class="cv-role">' + esc(d.personal.title) + '</p>' : '')
+        + (d.contacts.length ? '<p class="cv-contactline">' + contactLine(d.contacts) + '</p>' : '')
+        + '</div></header>';
+
+      out += block('Resumo', has(d.summary) ? '<p class="cv-summary">' + esc(d.summary) + '</p>' : '');
+      out += block('Experiência', d.experience.length ? experienceEntries(d.experience) : '');
+      out += block('Formação', d.education.length ? educationEntries(d.education) : '');
+      out += block('Habilidades', d.skills.length ? skillList(d.skills, 'tags') : '');
+      out += block('Idiomas', d.languages.length ? languageEntries(d.languages) : '');
+      out += block('Cursos', d.courses.length ? courseEntries(d.courses) : '');
+      d.custom.forEach(function (c) { out += block(c.title || 'Outros', paragraphs(c.content)); });
+      return out;
+    }
+  };
+
+  /* =============================================================
+     5. EXECUTIVO — sóbrio, centrado, para cargos sênior
+     ============================================================= */
+  var executivo = {
+    id: 'executivo',
+    name: 'Executivo',
+    tag: 'Sênior e gerencial',
+    css: [
+      '.cv--executivo{padding:var(--cv-pad);}',
+      '.cv--executivo .cv-head{display:flex;gap:6mm;align-items:center;border-bottom:3px double var(--cv-primary);padding-bottom:1em;}',
+      '.cv--executivo .cv-head__photo{width:25mm;height:25mm;border-radius:4px;flex:none;}',
+      '.cv--executivo .cv-head__text{flex:1;min-width:0;}',
+      '.cv--executivo .cv-name{font-size:2.15em;font-weight:600;color:var(--cv-secondary);}',
+      '.cv--executivo .cv-role{color:var(--cv-primary);font-weight:600;letter-spacing:.02em;}',
+      '.cv--executivo .cv-contactline{margin-top:.5em;font-size:.88em;color:#5b6167;}',
+      '.cv--executivo .cv-block{margin-top:1.25em;}',
+      '.cv--executivo .cv-section-title{border-left:3px solid var(--cv-primary);padding-left:.6em;color:var(--cv-secondary);}',
+      '.cv--executivo .cv-entry__role{color:var(--cv-secondary);}',
+      '.cv--executivo .cv-foot{display:flex;gap:7mm;margin-top:1.25em;}',
+      '.cv--executivo .cv-foot > *{flex:1;min-width:0;margin-top:0;}'
+    ].join('\n'),
+    render: function (d, state) {
+      var out = '<header class="cv-head">'
+        + photoTag(state, 'cv-photo cv-head__photo')
+        + '<div class="cv-head__text"><h1 class="cv-name">' + esc(d.personal.name || 'Seu nome') + '</h1>'
+        + (has(d.personal.title) ? '<p class="cv-role">' + esc(d.personal.title) + '</p>' : '')
+        + (d.contacts.length ? '<p class="cv-contactline">' + contactLine(d.contacts, ' · ') + '</p>' : '')
+        + '</div></header>';
+
+      if (has(d.summary)) out += '<section class="cv-block">' + sectionTitle('Perfil executivo') + '<p class="cv-summary">' + esc(d.summary) + '</p></section>';
+      if (d.experience.length) out += '<section class="cv-block">' + sectionTitle('Experiência') + experienceEntries(d.experience) + '</section>';
+      if (d.education.length) out += '<section class="cv-block">' + sectionTitle('Formação') + educationEntries(d.education) + '</section>';
+
+      var a = d.skills.length ? '<section class="cv-block">' + sectionTitle('Competências') + skillList(d.skills, 'dots') + '</section>' : '';
+      var b = '';
+      if (d.languages.length) b += '<section class="cv-block">' + sectionTitle('Idiomas') + languageEntries(d.languages) + '</section>';
+      if (d.courses.length) b += '<section class="cv-block">' + sectionTitle('Certificações') + courseEntries(d.courses) + '</section>';
+      if (a || b) out += '<div class="cv-foot"><div>' + a + '</div><div>' + b + '</div></div>';
+
+      out += customBlocks(d.custom);
+      return out;
+    }
+  };
+
+  /* =============================================================
+     6. COMPACTO — duas colunas densas, para currículo longo
+     ============================================================= */
+  var compacto = {
+    id: 'compacto',
+    name: 'Compacto',
+    tag: 'Muito conteúdo',
+    css: [
+      '.cv--compacto{padding:calc(var(--cv-pad) * .85);font-size:calc(var(--cv-fs) * .94);line-height:1.38;}',
+      '.cv--compacto .cv-head{display:flex;gap:5mm;align-items:center;background:var(--cv-tint);padding:4mm 5mm;border-radius:3px;}',
+      '.cv--compacto .cv-head__photo{width:20mm;height:20mm;border-radius:50%;flex:none;}',
+      '.cv--compacto .cv-name{font-size:1.75em;}',
+      '.cv--compacto .cv-role{color:var(--cv-primary);font-weight:600;font-size:1em;}',
+      '.cv--compacto .cv-contactline{font-size:.86em;color:#5b6167;margin-top:.3em;}',
+      '.cv--compacto .cv-grid{display:flex;gap:6mm;margin-top:1.1em;}',
+      '.cv--compacto .cv-col--main{flex:1.72;min-width:0;}',
+      '.cv--compacto .cv-col--side{flex:1;min-width:0;}',
+      '.cv--compacto .cv-block + .cv-block{margin-top:1em;}',
+      '.cv--compacto .cv-section-title{font-size:.8em;margin-bottom:.4em;border-bottom:1px solid var(--cv-tint-strong);padding-bottom:.2em;}',
+      '.cv--compacto .cv-entry + .cv-entry{margin-top:.65em;}',
+      '.cv--compacto .cv-bullets li{margin-bottom:.1em;}'
+    ].join('\n'),
+    render: function (d, state) {
+      var main = '';
+      if (has(d.summary)) main += '<section class="cv-block">' + sectionTitle('Resumo') + '<p class="cv-summary">' + esc(d.summary) + '</p></section>';
+      if (d.experience.length) main += '<section class="cv-block">' + sectionTitle('Experiência') + experienceEntries(d.experience) + '</section>';
+      main += customBlocks(d.custom);
+
+      var side = '';
+      if (d.education.length) side += '<section class="cv-block">' + sectionTitle('Formação') + educationEntries(d.education) + '</section>';
+      if (d.skills.length) side += '<section class="cv-block">' + sectionTitle('Habilidades') + skillList(d.skills, 'dots') + '</section>';
+      if (d.languages.length) side += '<section class="cv-block">' + sectionTitle('Idiomas') + languageEntries(d.languages) + '</section>';
+      if (d.courses.length) side += '<section class="cv-block">' + sectionTitle('Cursos') + courseEntries(d.courses) + '</section>';
+
+      return '<header class="cv-head">'
+        + photoTag(state, 'cv-photo cv-head__photo')
+        + '<div><h1 class="cv-name">' + esc(d.personal.name || 'Seu nome') + '</h1>'
+        + (has(d.personal.title) ? '<p class="cv-role">' + esc(d.personal.title) + '</p>' : '')
+        + (d.contacts.length ? '<p class="cv-contactline">' + contactLine(d.contacts) + '</p>' : '')
+        + '</div></header>'
+        + '<div class="cv-grid"><div class="cv-col--main">' + main + '</div>'
+        + '<div class="cv-col--side">' + side + '</div></div>';
+    }
+  };
+
+  var ALL = [moderno, classico, criativo, minimalista, executivo, compacto];
+
+  var BY_ID = ALL.reduce(function (acc, t) { acc[t.id] = t; return acc; }, {});
+
+  /* ---------- miniaturas dos modelos (SVG, herdam a cor escolhida) ---------- */
+  function thumb(id, primary) {
+    var p = esc(primary);
+    var g = '#d8d6d0';
+    var parts = {
+      moderno: '<rect width="70" height="20" fill="' + p + '"/><circle cx="14" cy="10" r="6" fill="#fff" opacity=".7"/><rect x="24" y="6" width="30" height="4" fill="#fff"/><rect x="24" y="13" width="20" height="3" fill="#fff" opacity=".65"/>'
+        + '<rect y="20" width="24" height="79" fill="' + p + '" opacity=".13"/>'
+        + '<rect x="4" y="26" width="16" height="3" fill="' + p + '"/><rect x="4" y="33" width="14" height="2.5" fill="' + g + '"/><rect x="4" y="38" width="16" height="2.5" fill="' + g + '"/><rect x="4" y="48" width="16" height="3" fill="' + p + '"/><rect x="4" y="55" width="12" height="2.5" fill="' + g + '"/>'
+        + '<rect x="29" y="26" width="20" height="3" fill="' + p + '"/><rect x="29" y="33" width="36" height="2.5" fill="' + g + '"/><rect x="29" y="38" width="32" height="2.5" fill="' + g + '"/><rect x="29" y="48" width="22" height="3" fill="' + p + '"/><rect x="29" y="55" width="36" height="2.5" fill="' + g + '"/><rect x="29" y="60" width="30" height="2.5" fill="' + g + '"/><rect x="29" y="70" width="20" height="3" fill="' + p + '"/><rect x="29" y="77" width="34" height="2.5" fill="' + g + '"/>',
+      classico: '<rect x="20" y="8" width="30" height="4.5" fill="#333"/><rect x="26" y="16" width="18" height="2.5" fill="#888"/><rect x="18" y="22" width="34" height="1.6" fill="#aaa"/><rect x="8" y="30" width="54" height="1.6" fill="#333"/>'
+        + '<rect x="8" y="35" width="20" height="3" fill="#333"/><rect x="8" y="42" width="54" height="2.4" fill="' + g + '"/><rect x="8" y="47" width="48" height="2.4" fill="' + g + '"/><rect x="8" y="56" width="22" height="3" fill="#333"/><rect x="8" y="63" width="54" height="2.4" fill="' + g + '"/><rect x="8" y="68" width="50" height="2.4" fill="' + g + '"/><rect x="8" y="77" width="18" height="3" fill="#333"/><rect x="8" y="84" width="46" height="2.4" fill="' + g + '"/>',
+      criativo: '<rect width="70" height="26" fill="' + p + '"/><rect x="6" y="6" width="14" height="14" rx="4" fill="#fff" opacity=".75"/><rect x="25" y="8" width="30" height="4" fill="#fff"/><rect x="25" y="15" width="22" height="3" fill="#fff" opacity=".7"/>'
+        + '<rect x="10" y="34" width="1.6" height="34" fill="' + p + '" opacity=".4"/><circle cx="10.8" cy="38" r="2.6" fill="' + p + '"/><circle cx="10.8" cy="54" r="2.6" fill="' + p + '"/>'
+        + '<rect x="17" y="36" width="30" height="2.8" fill="#555"/><rect x="17" y="42" width="44" height="2.2" fill="' + g + '"/><rect x="17" y="52" width="26" height="2.8" fill="#555"/><rect x="17" y="58" width="42" height="2.2" fill="' + g + '"/>'
+        + '<rect x="8" y="76" width="16" height="6" rx="3" fill="' + p + '" opacity=".2"/><rect x="27" y="76" width="20" height="6" rx="3" fill="' + p + '" opacity=".2"/><rect x="50" y="76" width="13" height="6" rx="3" fill="' + p + '" opacity=".2"/>',
+      minimalista: '<rect x="10" y="14" width="40" height="6" fill="#2b2f33"/><rect x="10" y="24" width="24" height="3" fill="' + p + '"/>'
+        + '<rect x="10" y="38" width="52" height="1" fill="#e6e4de"/><rect x="10" y="44" width="14" height="2.6" fill="#a9aeb3"/><rect x="30" y="44" width="32" height="2.4" fill="' + g + '"/><rect x="30" y="49" width="28" height="2.4" fill="' + g + '"/>'
+        + '<rect x="10" y="60" width="52" height="1" fill="#e6e4de"/><rect x="10" y="66" width="14" height="2.6" fill="#a9aeb3"/><rect x="30" y="66" width="32" height="2.4" fill="' + g + '"/><rect x="30" y="71" width="24" height="2.4" fill="' + g + '"/>'
+        + '<rect x="10" y="82" width="52" height="1" fill="#e6e4de"/><rect x="10" y="88" width="14" height="2.6" fill="#a9aeb3"/><rect x="30" y="88" width="26" height="2.4" fill="' + g + '"/>',
+      executivo: '<rect x="8" y="8" width="14" height="14" fill="' + p + '" opacity=".25"/><rect x="27" y="9" width="32" height="5" fill="#2b2f33"/><rect x="27" y="17" width="20" height="3" fill="' + p + '"/><rect x="8" y="28" width="54" height="2" fill="' + p + '"/>'
+        + '<rect x="8" y="36" width="2" height="4" fill="' + p + '"/><rect x="13" y="36" width="20" height="3" fill="#2b2f33"/><rect x="8" y="44" width="54" height="2.4" fill="' + g + '"/><rect x="8" y="49" width="48" height="2.4" fill="' + g + '"/>'
+        + '<rect x="8" y="58" width="2" height="4" fill="' + p + '"/><rect x="13" y="58" width="22" height="3" fill="#2b2f33"/><rect x="8" y="66" width="54" height="2.4" fill="' + g + '"/>'
+        + '<rect x="8" y="78" width="24" height="2.6" fill="#2b2f33"/><rect x="38" y="78" width="24" height="2.6" fill="#2b2f33"/><rect x="8" y="84" width="24" height="2.2" fill="' + g + '"/><rect x="38" y="84" width="24" height="2.2" fill="' + g + '"/>',
+      compacto: '<rect x="5" y="5" width="60" height="16" fill="' + p + '" opacity=".14"/><circle cx="14" cy="13" r="5.5" fill="' + p + '" opacity=".4"/><rect x="23" y="9" width="26" height="3.5" fill="#2b2f33"/><rect x="23" y="15" width="18" height="2.4" fill="' + p + '"/>'
+        + '<rect x="5" y="27" width="18" height="2.4" fill="' + p + '"/><rect x="5" y="32" width="36" height="2" fill="' + g + '"/><rect x="5" y="36" width="33" height="2" fill="' + g + '"/><rect x="5" y="40" width="36" height="2" fill="' + g + '"/><rect x="5" y="47" width="16" height="2.4" fill="' + p + '"/><rect x="5" y="52" width="36" height="2" fill="' + g + '"/><rect x="5" y="56" width="30" height="2" fill="' + g + '"/><rect x="5" y="60" width="34" height="2" fill="' + g + '"/><rect x="5" y="64" width="28" height="2" fill="' + g + '"/>'
+        + '<rect x="46" y="27" width="14" height="2.4" fill="' + p + '"/><rect x="46" y="32" width="19" height="2" fill="' + g + '"/><rect x="46" y="36" width="16" height="2" fill="' + g + '"/><rect x="46" y="43" width="14" height="2.4" fill="' + p + '"/><rect x="46" y="48" width="19" height="2" fill="' + g + '"/><rect x="46" y="52" width="17" height="2" fill="' + g + '"/><rect x="46" y="56" width="19" height="2" fill="' + g + '"/>'
+    };
+    return '<svg viewBox="0 0 70 99" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">'
+      + '<rect width="70" height="99" fill="#fff"/>' + (parts[id] || '') + '</svg>';
+  }
+
+  /* ---------- pilha de fontes com fallback ---------- */
+  var FONT_STACKS = {
+    'Inter': '"Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif',
+    'Lato': '"Lato", "Trebuchet MS", system-ui, Arial, sans-serif',
+    'Poppins': '"Poppins", "Century Gothic", system-ui, Arial, sans-serif',
+    'Source Serif 4': '"Source Serif 4", "Source Serif Pro", Georgia, "Times New Roman", serif',
+    'Merriweather': '"Merriweather", Georgia, "Times New Roman", serif',
+    'Georgia': 'Georgia, "Times New Roman", "Liberation Serif", serif'
+  };
+
+  var SIZE_PX = { s: 12.3, m: 13.3, l: 14.4 };
+
+  /* ---------- API pública ---------- */
+  function render(state) {
+    var tpl = BY_ID[state.settings.template] || moderno;
+    var data = collect(state);
+    return {
+      id: tpl.id,
+      className: 'cv--' + tpl.id,
+      html: tpl.render(data, state),
+      css: BASE_CSS + '\n' + tpl.css
+    };
+  }
+
+  global.CVTemplates = {
+    list: ALL.map(function (t) { return { id: t.id, name: t.name, tag: t.tag }; }),
+    thumb: thumb,
+    render: render,
+    fontStack: function (name) { return FONT_STACKS[name] || FONT_STACKS.Inter; },
+    fontSize: function (size) { return (SIZE_PX[size] || SIZE_PX.m) + 'px'; },
+    escape: esc
+  };
+})(window);
+
+</script>
+<script>
+/* =============================================================
+   Vitae — exportação em PDF.
+   Estratégia: rasterizar a própria folha do preview com
+   html2canvas e fatiar a imagem em páginas A4 no jsPDF. O corte
+   procura uma faixa de pixels vazia perto do limite da página,
+   para não partir uma linha de texto ao meio.
+   Exposto em window.CVPdf.
+   ============================================================= */
+(function (global) {
+  'use strict';
+
+  var MM_PER_PAGE_W = 210;
+  var MM_PER_PAGE_H = 297;
+
+  /* Nome do arquivo: curriculo-nome-da-pessoa.pdf */
+  function slugify(name) {
+    var base = String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return base || 'sem-nome';
+  }
+
+  function fileName(state) {
+    return 'curriculo-' + slugify(state.personal && state.personal.name) + '.pdf';
+  }
+
+  /* Escala de rasterização: nitidez sem estourar a memória do celular. */
+  function pickScale(pageEl) {
+    var dpr = global.devicePixelRatio || 1;
+    var wanted = Math.max(2, Math.min(3, dpr * 1.5));
+    var area = pageEl.offsetWidth * pageEl.offsetHeight * wanted * wanted;
+    // Safari em iOS trava acima de ~16M px por canvas.
+    var maxArea = 16000000;
+    if (area > maxArea) wanted = Math.max(1.5, Math.sqrt(maxArea / (pageEl.offsetWidth * pageEl.offsetHeight)));
+    return wanted;
+  }
+
+  /* Constrói uma cópia da folha fora da tela, sem transformações
+     de zoom nem as guias de quebra, para virar imagem. */
+  function buildClone(pageEl) {
+    var host = document.createElement('div');
+    host.setAttribute('aria-hidden', 'true');
+    host.style.cssText = 'position:fixed;left:-10000px;top:0;z-index:-1;background:#fff;';
+
+    var clone = pageEl.cloneNode(true);
+    clone.style.transform = 'none';
+    clone.style.boxShadow = 'none';
+    clone.style.margin = '0';
+    Array.prototype.forEach.call(clone.querySelectorAll('.cv-page__break'), function (el) {
+      el.parentNode.removeChild(el);
+    });
+
+    host.appendChild(clone);
+    document.body.appendChild(host);
+    return { host: host, clone: clone };
+  }
+
+  /* Procura, subindo a partir de `target`, uma linha de pixels
+     praticamente uniforme — ou seja, sem texto atravessando. */
+  function findBreakRow(ctx, canvasW, target, minRow, window_) {
+    var limit = Math.max(minRow + 20, target - window_);
+    var step = 2;
+    var sampleCount = 60;
+
+    for (var y = target; y > limit; y -= step) {
+      if (isRowClear(ctx, canvasW, y, sampleCount)) {
+        // Confirma que a vizinhança também está limpa (evita cortar
+        // no vão entre duas linhas de um mesmo parágrafo).
+        if (isRowClear(ctx, canvasW, y - 2, sampleCount) && isRowClear(ctx, canvasW, y - 4, sampleCount)) {
+          return y;
+        }
+      }
+    }
+    return target; // nada limpo por perto: corta no limite mesmo
+  }
+
+  /* Uma linha é "limpa" quando a cor quase não muda ao longo dela.
+     Faixas laterais coloridas (sidebar) provocam poucos saltos e são
+     aceitas; texto provoca muitos e reprova a linha. */
+  function isRowClear(ctx, canvasW, y, samples) {
+    if (y < 1) return false;
+    var data;
+    try {
+      data = ctx.getImageData(0, y, canvasW, 1).data;
+    } catch (err) {
+      return false; // canvas manchado por imagem externa: sem corte fino
+    }
+
+    var stepX = Math.max(1, Math.floor(canvasW / samples));
+    var jumps = 0;
+    var prev = null;
+
+    for (var x = 0; x < canvasW; x += stepX) {
+      var i = x * 4;
+      var r = data[i], g = data[i + 1], b = data[i + 2];
+      if (prev) {
+        if (Math.abs(r - prev[0]) > 14 || Math.abs(g - prev[1]) > 14 || Math.abs(b - prev[2]) > 14) {
+          jumps++;
+          if (jumps > 3) return false;
+        }
+      }
+      prev = [r, g, b];
+    }
+    return true;
+  }
+
+  /* Recorta um trecho vertical do canvas em um canvas novo. */
+  function sliceCanvas(source, top, height) {
+    var out = document.createElement('canvas');
+    out.width = source.width;
+    out.height = height;
+    var ctx = out.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, out.width, out.height);
+    ctx.drawImage(source, 0, top, source.width, height, 0, 0, source.width, height);
+    return out;
+  }
+
+  function ready() {
+    return !!(global.html2canvas && global.jspdf && global.jspdf.jsPDF);
+  }
+
+  /* Conta quantas páginas A4 o conteúdo atual ocupa (para a interface). */
+  function pageCount(pageEl) {
+    var pxPerMm = pageEl.offsetWidth / MM_PER_PAGE_W;
+    var pageH = MM_PER_PAGE_H * pxPerMm;
+    return Math.max(1, Math.ceil((pageEl.scrollHeight - 2) / pageH));
+  }
+
+  /**
+   * Gera e baixa o PDF.
+   * @param {HTMLElement} pageEl elemento .cv-page do preview
+   * @param {Object} state estado do currículo (para o nome do arquivo)
+   * @returns {Promise<{pages:number,file:string}>}
+   */
+  function exportPdf(pageEl, state) {
+    if (!ready()) {
+      return Promise.reject(new Error('As bibliotecas de PDF não carregaram. Verifique a conexão e recarregue a página.'));
+    }
+
+    var built = buildClone(pageEl);
+    var scale = pickScale(pageEl);
+
+    var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+
+    return fontsReady
+      .then(function () {
+        return global.html2canvas(built.clone, {
+          scale: scale,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          allowTaint: false,
+          logging: false,
+          windowWidth: built.clone.offsetWidth,
+          scrollX: 0,
+          scrollY: 0
+        });
+      })
+      .then(function (canvas) {
+        var JsPDF = global.jspdf.jsPDF;
+        var pdf = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+
+        var pxPerMm = canvas.width / MM_PER_PAGE_W;
+        var fullPageH = Math.floor(MM_PER_PAGE_H * pxPerMm);
+        var searchWindow = Math.floor(fullPageH * 0.12); // até 12% da página procurando respiro
+
+        var ctx = canvas.getContext('2d', { willReadFrequently: true });
+        var offset = 0;
+        var pages = 0;
+        var remaining = canvas.height;
+
+        while (remaining > 1) {
+          var sliceH;
+          if (remaining <= fullPageH + 4) {
+            sliceH = remaining;
+          } else {
+            var target = offset + fullPageH;
+            var cut = findBreakRow(ctx, canvas.width, target, offset, searchWindow);
+            sliceH = cut - offset;
+            if (sliceH < fullPageH * 0.5) sliceH = fullPageH; // corte absurdo: ignora
+          }
+
+          var piece = sliceCanvas(canvas, offset, Math.min(sliceH, remaining));
+          var imgH = (piece.height / pxPerMm);
+          if (pages > 0) pdf.addPage();
+          pdf.addImage(piece.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, MM_PER_PAGE_W, imgH, undefined, 'FAST');
+
+          offset += piece.height;
+          remaining -= piece.height;
+          pages++;
+
+          if (pages > 20) break; // trava de segurança
+        }
+
+        var name = fileName(state);
+        pdf.save(name);
+        return { pages: pages, file: name };
+      })
+      .then(function (result) {
+        cleanup(built);
+        return result;
+      })
+      .catch(function (err) {
+        cleanup(built);
+        throw err;
+      });
+  }
+
+  function cleanup(built) {
+    if (built && built.host && built.host.parentNode) built.host.parentNode.removeChild(built.host);
+  }
+
+  global.CVPdf = {
+    exportPdf: exportPdf,
+    pageCount: pageCount,
+    fileName: fileName,
+    slugify: slugify,
+    ready: ready
+  };
+})(window);
+
+</script>
+<script>
+/* =============================================================
+   Vitae — controlador da aplicação.
+   Liga o estado (storage.js) ao formulário e ao preview
+   (templates.js), e dispara a exportação (pdf-export.js).
+   Nada de variáveis globais soltas: tudo vive neste IIFE.
+   ============================================================= */
+(function (global) {
+  'use strict';
+
+  var Storage = global.CVStorage;
+  var Templates = global.CVTemplates;
+  var Pdf = global.CVPdf;
+
+  /* ---------- estado ---------- */
+  var state = Storage.load() || Storage.emptyState();
+  var hadSaved = !!Storage.load();
+  var ui = Storage.loadUI();
+  var zoom = 0;            // passos de zoom sobre a escala "ajustar"
+  var activeTab = 'edit';
+  var renderTimer = null;
+
+  /* ---------- atalhos de DOM ---------- */
+  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function $$(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  var dom = {};
+
+  /* ---------- caminhos aninhados (data-bind="personal.name") ---------- */
+  function getPath(obj, path) {
+    return path.split('.').reduce(function (acc, k) { return acc == null ? acc : acc[k]; }, obj);
+  }
+  function setPath(obj, path, value) {
+    var keys = path.split('.');
+    var last = keys.pop();
+    var target = keys.reduce(function (acc, k) { return acc[k] = acc[k] || {}; }, obj);
+    target[last] = value;
+  }
+
+  /* =============================================================
+     Paletas
+     ============================================================= */
+  var PALETTES = [
+    { name: 'Verde profundo', primary: '#1f6f5c', secondary: '#2f3a3a' },
+    { name: 'Azul marinho', primary: '#1f3f73', secondary: '#33415c' },
+    { name: 'Grafite', primary: '#2b2f36', secondary: '#565d66' },
+    { name: 'Vinho', primary: '#7b2436', secondary: '#3a2a2e' },
+    { name: 'Petróleo', primary: '#15616d', secondary: '#2a3d45' },
+    { name: 'Terracota', primary: '#a65437', secondary: '#4a3730' },
+    { name: 'Roxo', primary: '#5a3d8a', secondary: '#3b3350' },
+    { name: 'Oliva', primary: '#5b6b28', secondary: '#3c3f2c' }
+  ];
+
+  /* =============================================================
+     Contraste (WCAG)
+     ============================================================= */
+  function hexToRgb(hex) {
+    var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(String(hex).trim());
+    if (!m) return { r: 0, g: 0, b: 0 };
+    return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
+  }
+  function luminance(hex) {
+    var c = hexToRgb(hex);
+    var vals = [c.r, c.g, c.b].map(function (v) {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * vals[0] + 0.7152 * vals[1] + 0.0722 * vals[2];
+  }
+  function contrastRatio(a, b) {
+    var l1 = luminance(a), l2 = luminance(b);
+    var hi = Math.max(l1, l2), lo = Math.min(l1, l2);
+    return (hi + 0.05) / (lo + 0.05);
+  }
+  function tint(hex, amount) {
+    var c = hexToRgb(hex);
+    function mix(v) { return Math.round(v + (255 - v) * amount); }
+    return 'rgb(' + mix(c.r) + ',' + mix(c.g) + ',' + mix(c.b) + ')';
+  }
+
+  /* =============================================================
+     Definição dos campos de cada lista
+     ============================================================= */
+  var LIST_DEFS = {
+    experience: {
+      title: function (item) { return [item.role, item.company].filter(Boolean).join(' — ') || 'Nova experiência'; },
+      fields: [
+        { key: 'role', label: 'Cargo', type: 'text', placeholder: 'Analista de marketing pleno' },
+        { key: 'company', label: 'Empresa', type: 'text', placeholder: 'Loja Marear' },
+        { key: 'start', label: 'Início', type: 'text', placeholder: '03/2022' },
+        { key: 'end', label: 'Fim', type: 'text', placeholder: '12/2024' },
+        { key: 'current', label: 'Trabalho aqui atualmente', type: 'checkbox' },
+        { key: 'description', label: 'O que você fez (uma linha por item)', type: 'textarea', full: true,
+          placeholder: 'Reduzi o custo por aquisição em 34% em oito meses.' }
+      ]
+    },
+    education: {
+      title: function (item) { return [item.course, item.school].filter(Boolean).join(' — ') || 'Nova formação'; },
+      fields: [
+        { key: 'course', label: 'Curso', type: 'text', placeholder: 'Publicidade e Propaganda' },
+        { key: 'school', label: 'Instituição', type: 'text', placeholder: 'Universidade Católica de Santos' },
+        { key: 'level', label: 'Nível', type: 'select', options: ['Técnico', 'Tecnólogo', 'Graduação', 'Pós-graduação', 'MBA', 'Mestrado', 'Doutorado', 'Curso livre'] },
+        { key: 'start', label: 'Início', type: 'text', placeholder: '2015' },
+        { key: 'end', label: 'Conclusão', type: 'text', placeholder: '2019' }
+      ]
+    },
+    skills: {
+      title: function (item) { return item.name || 'Nova habilidade'; },
+      fields: [
+        { key: 'name', label: 'Habilidade', type: 'text', placeholder: 'Google Ads' },
+        { key: 'level', label: 'Nível', type: 'level' }
+      ]
+    },
+    languages: {
+      title: function (item) { return item.name || 'Novo idioma'; },
+      fields: [
+        { key: 'name', label: 'Idioma', type: 'text', placeholder: 'Inglês' },
+        { key: 'level', label: 'Nível', type: 'select', options: ['Básico', 'Intermediário', 'Avançado', 'Fluente', 'Nativo'] }
+      ]
+    },
+    courses: {
+      title: function (item) { return item.name || 'Novo curso'; },
+      fields: [
+        { key: 'name', label: 'Curso ou certificação', type: 'text', full: true, placeholder: 'Google Ads Search Certification' },
+        { key: 'org', label: 'Instituição', type: 'text', placeholder: 'Google Skillshop' },
+        { key: 'year', label: 'Ano', type: 'text', placeholder: '2024' }
+      ]
+    },
+    custom: {
+      title: function (item) { return item.title || 'Nova seção'; },
+      fields: [
+        { key: 'title', label: 'Título da seção', type: 'text', full: true, placeholder: 'Voluntariado' },
+        { key: 'content', label: 'Conteúdo', type: 'textarea', full: true, placeholder: 'Mentoria de marketing para pequenos negócios…' }
+      ]
+    }
+  };
+
+  var SECTIONS = [
+    { id: 'sec-personal', label: 'Dados pessoais' },
+    { id: 'sec-summary', label: 'Resumo' },
+    { id: 'sec-experience', label: 'Experiência' },
+    { id: 'sec-education', label: 'Formação' },
+    { id: 'sec-skills', label: 'Habilidades' },
+    { id: 'sec-languages', label: 'Idiomas' },
+    { id: 'sec-courses', label: 'Cursos' },
+    { id: 'sec-custom', label: 'Seções livres' },
+    { id: 'sec-templates', label: 'Modelos' },
+    { id: 'sec-style', label: 'Cores e fonte' }
+  ];
+
+  /* =============================================================
+     Construção das listas
+     ============================================================= */
+  function buildItem(listName, item, index) {
+    var def = LIST_DEFS[listName];
+    var node = el('div', 'item');
+    node.dataset.list = listName;
+    node.dataset.index = String(index);
+    node.setAttribute('draggable', 'false');
+
+    var head = el('div', 'item__head');
+
+    var handle = el('button', 'item__handle');
+    handle.type = 'button';
+    handle.setAttribute('aria-label', 'Reordenar: arraste, ou use as setas do teclado');
+    handle.title = 'Arraste para reordenar (ou use ↑ ↓)';
+    handle.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-drag"></use></svg>';
+    // O arraste só começa pela alça: evita arrastar sem querer ao selecionar texto.
+    handle.addEventListener('mousedown', function () { node.setAttribute('draggable', 'true'); });
+    node.addEventListener('dragend', function () { node.setAttribute('draggable', 'false'); });
+    handle.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowUp') { e.preventDefault(); moveItem(listName, index, index - 1, true); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveItem(listName, index, index + 1, true); }
+    });
+
+    var title = el('span', 'item__title', def.title(item));
+    title.dataset.role = 'item-title';
+
+    // Alternativa ao arraste para telas de toque e navegação por teclado.
+    var up = el('button', 'btn item__move');
+    up.type = 'button';
+    up.setAttribute('aria-label', 'Mover para cima');
+    up.textContent = '↑';
+    up.disabled = index === 0;
+    up.addEventListener('click', function () { moveItem(listName, index, index - 1); });
+
+    var down = el('button', 'btn item__move');
+    down.type = 'button';
+    down.setAttribute('aria-label', 'Mover para baixo');
+    down.textContent = '↓';
+    down.disabled = index === state[listName].length - 1;
+    down.addEventListener('click', function () { moveItem(listName, index, index + 1); });
+
+    var remove = el('button', 'btn item__remove');
+    remove.type = 'button';
+    remove.setAttribute('aria-label', 'Remover item');
+    remove.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-trash"></use></svg>';
+    remove.addEventListener('click', function () { removeItem(listName, node); });
+
+    head.append(handle, title, up, down, remove);
+
+    var body = el('div', 'item__body');
+    var twoCols = def.fields.filter(function (f) { return !f.full && f.type !== 'checkbox'; }).length > 1;
+    if (twoCols) body.classList.add('grid--2');
+
+    def.fields.forEach(function (f) {
+      body.appendChild(buildField(listName, item, index, f));
+    });
+
+    node.append(head, body);
+    attachDrag(node);
+    return node;
+  }
+
+  function buildField(listName, item, index, f) {
+    var id = 'f-' + listName + '-' + index + '-' + f.key;
+    var wrap;
+
+    if (f.type === 'checkbox') {
+      wrap = el('label', 'item__current');
+      wrap.style.gridColumn = '1 / -1';
+      var cb = el('input');
+      cb.type = 'checkbox';
+      cb.id = id;
+      cb.checked = !!item[f.key];
+      cb.addEventListener('change', function () {
+        item[f.key] = cb.checked;
+        onChange();
+      });
+      wrap.append(cb, document.createTextNode(f.label));
+      return wrap;
+    }
+
+    wrap = el('div', 'field');
+    if (f.full) wrap.style.gridColumn = '1 / -1';
+
+    var label = el('label', null, f.label);
+    label.setAttribute('for', id);
+    wrap.appendChild(label);
+
+    if (f.type === 'level') {
+      var group = el('div', 'level');
+      group.id = id;
+      group.setAttribute('role', 'radiogroup');
+      group.setAttribute('aria-label', f.label);
+      for (var i = 1; i <= 5; i++) {
+        (function (value) {
+          var dot = el('button', 'level__dot' + (value <= (item[f.key] || 0) ? ' is-on' : ''));
+          dot.type = 'button';
+          dot.setAttribute('role', 'radio');
+          dot.setAttribute('aria-label', 'Nível ' + value + ' de 5');
+          dot.setAttribute('aria-checked', String(value === item[f.key]));
+          dot.addEventListener('click', function () {
+            item[f.key] = value;
+            $$('.level__dot', group).forEach(function (d, idx) {
+              d.classList.toggle('is-on', idx < value);
+              d.setAttribute('aria-checked', String(idx + 1 === value));
+            });
+            onChange();
+          });
+          group.appendChild(dot);
+        })(i);
+      }
+      wrap.appendChild(group);
+      return wrap;
+    }
+
+    var input;
+    if (f.type === 'textarea') {
+      input = el('textarea');
+      input.rows = 4;
+    } else if (f.type === 'select') {
+      input = el('select');
+      f.options.forEach(function (opt) {
+        var o = el('option', null, opt);
+        o.value = opt;
+        input.appendChild(o);
+      });
+    } else {
+      input = el('input');
+      input.type = 'text';
+    }
+    input.id = id;
+    input.value = item[f.key] == null ? '' : item[f.key];
+    if (f.placeholder) input.placeholder = f.placeholder;
+
+    input.addEventListener('input', function () {
+      item[f.key] = input.value;
+      var titleNode = $('[data-role="item-title"]', input.closest('.item'));
+      if (titleNode) titleNode.textContent = LIST_DEFS[listName].title(item);
+      onChange();
+    });
+    if (f.type === 'select') input.addEventListener('change', function () { onChange(); });
+
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  function renderList(listName) {
+    var container = $('#list-' + listName);
+    if (!container) return;
+    container.textContent = '';
+    state[listName].forEach(function (item, i) {
+      container.appendChild(buildItem(listName, item, i));
+    });
+    if (!state[listName].length) {
+      var empty = el('p', 'panel__hint', 'Nada aqui ainda. Use o botão abaixo para começar.');
+      container.appendChild(empty);
+    }
+  }
+
+  function addItem(listName) {
+    state[listName].push(Storage.blankItem(listName));
+    renderList(listName);
+    var items = $$('.item', $('#list-' + listName));
+    var last = items[items.length - 1];
+    if (last) {
+      var firstInput = $('input, textarea, select', last);
+      if (firstInput) firstInput.focus();
+    }
+    onChange();
+  }
+
+  function moveItem(listName, from, to, keepFocus) {
+    var list = state[listName];
+    if (to < 0 || to >= list.length) return;
+    list.splice(to, 0, list.splice(from, 1)[0]);
+    renderList(listName);
+    if (keepFocus) {
+      var items = $$('.item', $('#list-' + listName));
+      if (items[to]) $('.item__handle', items[to]).focus();
+    }
+    onChange();
+  }
+
+  function removeItem(listName, node) {
+    var index = Number(node.dataset.index);
+    node.classList.add('is-leaving');
+    setTimeout(function () {
+      state[listName].splice(index, 1);
+      renderList(listName);
+      onChange();
+    }, 160);
+  }
+
+  /* ---------- reordenar (Drag Events API nativa) ---------- */
+  var dragSource = null;
+
+  function attachDrag(node) {
+    node.addEventListener('dragstart', function (e) {
+      dragSource = node;
+      node.classList.add('is-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', node.dataset.index); } catch (err) { /* IE legado */ }
+    });
+
+    node.addEventListener('dragend', function () {
+      node.classList.remove('is-dragging');
+      $$('.item.is-dropzone').forEach(function (n) { n.classList.remove('is-dropzone'); });
+      dragSource = null;
+    });
+
+    node.addEventListener('dragover', function (e) {
+      if (!dragSource || dragSource === node) return;
+      if (dragSource.dataset.list !== node.dataset.list) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      node.classList.add('is-dropzone');
+    });
+
+    node.addEventListener('dragleave', function () { node.classList.remove('is-dropzone'); });
+
+    node.addEventListener('drop', function (e) {
+      e.preventDefault();
+      node.classList.remove('is-dropzone');
+      if (!dragSource || dragSource === node) return;
+      var listName = node.dataset.list;
+      if (dragSource.dataset.list !== listName) return;
+      var from = Number(dragSource.dataset.index);
+      var to = Number(node.dataset.index);
+      var moved = state[listName].splice(from, 1)[0];
+      state[listName].splice(to, 0, moved);
+      renderList(listName);
+      onChange();
+    });
+  }
+
+  /* =============================================================
+     Campos fixos
+     ============================================================= */
+  function bindStaticFields() {
+    $$('[data-bind]').forEach(function (input) {
+      var path = input.dataset.bind;
+      var value = getPath(state, path);
+      if (input.type === 'checkbox') input.checked = !!value;
+      else input.value = value == null ? '' : value;
+
+      var evt = (input.type === 'color' || input.type === 'range' || input.tagName === 'SELECT') ? 'input' : 'input';
+      input.addEventListener(evt, function () {
+        setPath(state, path, input.type === 'checkbox' ? input.checked : input.value);
+        if (path === 'settings.margin') $('#margin-out').textContent = input.value;
+        if (path === 'settings.primary' || path === 'settings.secondary') syncPaletteSelection();
+        onChange();
+      });
+    });
+
+    // Mostrar foto tem id próprio (fora do data-bind por causa do estado visual)
+    var showPhoto = $('#f-showPhoto');
+    showPhoto.checked = state.settings.showPhoto;
+    showPhoto.addEventListener('change', function () {
+      state.settings.showPhoto = showPhoto.checked;
+      onChange();
+    });
+
+    var zoomInput = $('#f-photoZoom');
+    zoomInput.value = state.personal.photoZoom;
+    zoomInput.addEventListener('input', function () {
+      state.personal.photoZoom = Number(zoomInput.value);
+      onChange();
+    });
+
+    $('#margin-out').textContent = state.settings.margin;
+    $('#f-margin').value = state.settings.margin;
+
+    var summary = $('#f-summary');
+    summary.addEventListener('input', updateSummaryCounter);
+    updateSummaryCounter();
+
+    // Aviso sutil de campo importante vazio, sem travar nada
+    ['#f-name', '#f-email'].forEach(function (sel) {
+      var input = $(sel);
+      input.addEventListener('blur', function () {
+        input.classList.toggle('is-empty-required', input.value.trim() === '');
+      });
+    });
+  }
+
+  function updateSummaryCounter() {
+    var len = $('#f-summary').value.length;
+    var note = $('#summary-counter');
+    note.textContent = len + ' caracteres · o ideal fica entre 300 e 600';
+    note.classList.toggle('is-warn', len > 700);
+    if (len > 700) note.textContent = len + ' caracteres · está ficando longo, tente cortar para 600';
+  }
+
+  /* ---------- foto ---------- */
+  function bindPhoto() {
+    var input = $('#f-photo');
+    input.addEventListener('change', function () {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      if (!/^image\//.test(file.type)) { toast('Escolha um arquivo de imagem.'); return; }
+      resizeImage(file, 520).then(function (dataUrl) {
+        state.personal.photo = dataUrl;
+        paintPhoto();
+        onChange();
+      }).catch(function () {
+        toast('Não foi possível abrir essa imagem.');
+      });
+      input.value = '';
+    });
+
+    $('[data-action="remove-photo"]').addEventListener('click', function () {
+      state.personal.photo = '';
+      paintPhoto();
+      onChange();
+    });
+  }
+
+  /* Reduz a foto antes de guardar: base64 grande estoura a cota do localStorage. */
+  function resizeImage(file, maxSize) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var img = new Image();
+        img.onload = function () {
+          var side = Math.min(img.width, img.height);
+          var canvas = document.createElement('canvas');
+          canvas.width = canvas.height = Math.min(maxSize, side);
+          var ctx = canvas.getContext('2d');
+          // Recorte quadrado central — é o que os modelos usam (círculo/quadrado)
+          ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side,
+            0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.86));
+        };
+        img.onerror = reject;
+        img.src = String(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function paintPhoto() {
+    var img = $('#photo-img');
+    if (state.personal.photo) {
+      img.src = state.personal.photo;
+      img.hidden = false;
+    } else {
+      img.removeAttribute('src');
+      img.hidden = true;
+    }
+  }
+
+  /* =============================================================
+     Modelos, paletas e tamanho
+     ============================================================= */
+  function buildTemplateGrid() {
+    var grid = $('#template-grid');
+    grid.textContent = '';
+    Templates.list.forEach(function (tpl) {
+      var btn = el('button', 'tpl');
+      btn.type = 'button';
+      btn.setAttribute('role', 'radio');
+      btn.dataset.template = tpl.id;
+      btn.setAttribute('aria-checked', String(state.settings.template === tpl.id));
+      var thumb = el('div', 'tpl__thumb');
+      thumb.innerHTML = Templates.thumb(tpl.id, state.settings.primary);
+      btn.append(thumb, el('span', 'tpl__name', tpl.name), el('span', 'tpl__tag', tpl.tag));
+      btn.addEventListener('click', function () {
+        state.settings.template = tpl.id;
+        syncTemplateSelection();
+        onChange();
+      });
+      grid.appendChild(btn);
+    });
+  }
+
+  function syncTemplateSelection() {
+    $$('.tpl').forEach(function (btn) {
+      btn.setAttribute('aria-checked', String(btn.dataset.template === state.settings.template));
+      var thumbBox = $('.tpl__thumb', btn);
+      thumbBox.innerHTML = Templates.thumb(btn.dataset.template, state.settings.primary);
+    });
+  }
+
+  function buildPaletteGrid() {
+    var grid = $('#palette-grid');
+    grid.textContent = '';
+    PALETTES.forEach(function (p) {
+      var btn = el('button', 'pal');
+      btn.type = 'button';
+      btn.setAttribute('role', 'radio');
+      btn.dataset.primary = p.primary;
+      btn.dataset.secondary = p.secondary;
+      btn.setAttribute('aria-label', 'Paleta ' + p.name);
+      btn.title = p.name;
+      var a = el('span', 'pal__a'); a.style.background = p.primary;
+      var b = el('span', 'pal__b'); b.style.background = p.secondary;
+      btn.append(a, b);
+      btn.addEventListener('click', function () {
+        state.settings.primary = p.primary;
+        state.settings.secondary = p.secondary;
+        $('#f-primary').value = p.primary;
+        $('#f-secondary').value = p.secondary;
+        syncPaletteSelection();
+        syncTemplateSelection();
+        onChange();
+      });
+      grid.appendChild(btn);
+    });
+    syncPaletteSelection();
+  }
+
+  function syncPaletteSelection() {
+    $$('.pal').forEach(function (btn) {
+      var match = btn.dataset.primary.toLowerCase() === String(state.settings.primary).toLowerCase()
+        && btn.dataset.secondary.toLowerCase() === String(state.settings.secondary).toLowerCase();
+      btn.setAttribute('aria-checked', String(match));
+    });
+  }
+
+  function bindSizeGroup() {
+    $$('#size-group button').forEach(function (btn) {
+      btn.setAttribute('aria-checked', String(btn.dataset.size === state.settings.size));
+      btn.addEventListener('click', function () {
+        state.settings.size = btn.dataset.size;
+        $$('#size-group button').forEach(function (b) {
+          b.setAttribute('aria-checked', String(b.dataset.size === state.settings.size));
+        });
+        onChange();
+      });
+    });
+  }
+
+  function updateContrastNote() {
+    var note = $('#contrast-note');
+    var onWhite = contrastRatio(state.settings.primary, '#ffffff');
+    var whiteOn = contrastRatio('#ffffff', state.settings.primary);
+    var problems = [];
+    if (onWhite < 4.5) problems.push('títulos coloridos sobre fundo branco');
+    if (whiteOn < 4.5) problems.push('texto branco sobre a faixa colorida');
+
+    if (problems.length) {
+      note.textContent = 'Contraste baixo em ' + problems.join(' e ') + '. Escolha um tom mais escuro para manter a leitura fácil (WCAG AA).';
+      note.classList.add('is-bad');
+    } else {
+      note.textContent = 'Contraste aprovado no nível AA (' + onWhite.toFixed(1) + ':1 sobre branco).';
+      note.classList.remove('is-bad');
+    }
+  }
+
+  /* =============================================================
+     Preview
+     ============================================================= */
+  var styleTag = null;
+
+  function renderPreview() {
+    var page = $('#cv-page');
+    var result = Templates.render(state);
+
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'cv-template-style';
+      document.head.appendChild(styleTag);
+    }
+    styleTag.textContent = result.css;
+
+    page.className = 'cv-page ' + result.className;
+    page.style.setProperty('--cv-primary', state.settings.primary);
+    page.style.setProperty('--cv-secondary', state.settings.secondary);
+    page.style.setProperty('--cv-tint', tint(state.settings.primary, 0.9));
+    page.style.setProperty('--cv-tint-strong', tint(state.settings.primary, 0.65));
+    page.style.setProperty('--cv-font', Templates.fontStack(state.settings.font));
+    page.style.setProperty('--cv-fs', Templates.fontSize(state.settings.size));
+    page.style.setProperty('--cv-margin', state.settings.margin + 'mm');
+    page.innerHTML = result.html;
+
+    drawPageGuides(page);
+    fitPreview();
+    updateContrastNote();
+  }
+
+  function drawPageGuides(page) {
+    var pxPerMm = page.offsetWidth / 210;
+    var pageH = 297 * pxPerMm;
+    var total = Math.max(1, Math.ceil((page.scrollHeight - 2) / pageH));
+
+    for (var i = 1; i < total; i++) {
+      var guide = el('div', 'cv-page__break');
+      guide.style.top = (pageH * i) + 'px';
+      guide.dataset.label = 'página ' + (i + 1);
+      page.appendChild(guide);
+    }
+    $('#page-count').textContent = total + (total === 1 ? ' página' : ' páginas');
+  }
+
+  function fitPreview() {
+    var stage = $('#preview-stage');
+    var scaler = $('#preview-scaler');
+    var page = $('#cv-page');
+    if (!stage.offsetWidth) return;
+
+    var available = stage.clientWidth - 2; // respiro para a sombra
+    var base = Math.min(1, available / page.offsetWidth);
+    var scale = Math.max(0.25, Math.min(1.8, base * Math.pow(1.1, zoom)));
+
+    scaler.style.transform = 'scale(' + scale + ')';
+    scaler.style.width = page.offsetWidth + 'px';
+    scaler.style.height = (page.offsetHeight * scale) + 'px';
+
+    $('#zoom-out-label').textContent = Math.round(scale * 100) + '%';
+  }
+
+  /* =============================================================
+     Fluxo de mudança
+     ============================================================= */
+  function onChange() {
+    if (renderTimer) cancelAnimationFrame(renderTimer);
+    renderTimer = requestAnimationFrame(function () {
+      renderTimer = null;
+      renderPreview();
+    });
+    Storage.save(state, function (ok, err) {
+      if (!ok && err) toast('Não deu para salvar: o armazenamento do navegador está cheio. Tente uma foto menor.');
+    });
+  }
+
+  /* =============================================================
+     Telas, abas e navegação
+     ============================================================= */
+  function showScreen(name) {
+    document.body.dataset.screen = name;
+    $('#screen-editor').hidden = (name !== 'editor');
+    $('#screen-landing').hidden = (name === 'editor');
+    if (name === 'editor') {
+      requestAnimationFrame(function () { renderPreview(); fitPreview(); });
+    }
+    global.scrollTo(0, 0);
+  }
+
+  function setTab(tab) {
+    activeTab = tab;
+    document.body.dataset.tab = (tab === 'preview') ? 'preview' : 'edit';
+    $$('.tabbar__btn').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.tab === tab);
+    });
+    if (tab === 'templates') scrollToSection('sec-templates');
+    if (tab === 'style') scrollToSection('sec-style');
+    if (tab === 'preview') requestAnimationFrame(fitPreview);
+  }
+
+  function scrollToSection(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    var pane = $('#pane-form');
+    var isPaneScroll = pane.scrollHeight > pane.clientHeight && getComputedStyle(pane).overflowY === 'auto';
+    if (isPaneScroll) {
+      pane.scrollTo({ top: target.offsetTop - 16, behavior: 'smooth' });
+    } else {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function buildRail() {
+    var list = $('#rail-list');
+    list.textContent = '';
+    SECTIONS.forEach(function (sec, i) {
+      var li = el('li');
+      var a = el('a', 'railnav__link');
+      a.href = '#' + sec.id;
+      a.dataset.target = sec.id;
+      a.append(el('span', 'railnav__num', String(i + 1)), el('span', 'railnav__label', sec.label));
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        scrollToSection(sec.id);
+      });
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+    watchSections();
+  }
+
+  function watchSections() {
+    if (!('IntersectionObserver' in global)) return;
+    var links = $$('.railnav__link');
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (a) {
+          a.classList.toggle('is-current', a.dataset.target === entry.target.id);
+        });
+      });
+    }, { root: $('#pane-form'), rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+    SECTIONS.forEach(function (sec) {
+      var node = document.getElementById(sec.id);
+      if (node) observer.observe(node);
+    });
+  }
+
+  /* =============================================================
+     Modal, toast, overlay
+     ============================================================= */
+  var lastFocused = null;
+
+  function openModal(opts) {
+    lastFocused = document.activeElement;
+    $('#modal-title').textContent = opts.title;
+    $('#modal-text').textContent = opts.text || '';
+    var actions = $('#modal-actions');
+    actions.textContent = '';
+
+    (opts.actions || []).forEach(function (a) {
+      var btn = el('button', 'btn ' + (a.variant || 'btn--quiet'), a.label);
+      btn.type = 'button';
+      btn.addEventListener('click', function () {
+        closeModal();
+        if (a.onClick) a.onClick();
+      });
+      actions.appendChild(btn);
+    });
+
+    $('#modal').hidden = false;
+    $('.modal__box').focus();
+  }
+
+  function closeModal() {
+    $('#modal').hidden = true;
+    if (lastFocused && lastFocused.focus) lastFocused.focus();
+  }
+
+  var toastTimer = null;
+  function toast(message) {
+    var node = $('#toast');
+    node.textContent = message;
+    node.hidden = false;
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { node.hidden = true; }, 3800);
+  }
+
+  function busy(on, text) {
+    $('#busy').hidden = !on;
+    if (text) $('#busy-text').textContent = text;
+  }
+
+  /* =============================================================
+     Ações do cabeçalho
+     ============================================================= */
+  function bindActions() {
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-action]');
+      if (!trigger) return;
+      var action = trigger.dataset.action;
+
+      if (action === 'start') { e.preventDefault(); showScreen('editor'); }
+      if (action === 'start-sample') {
+        e.preventDefault();
+        applyState(Storage.sampleState());
+        showScreen('editor');
+      }
+      if (action === 'go-landing') { e.preventDefault(); showScreen('landing'); }
+      if (action === 'toggle-theme') toggleTheme();
+      if (action === 'new-resume') confirmNew();
+      if (action === 'open-data-menu') openDataMenu();
+      if (action === 'export-pdf') doExport();
+    });
+
+    $$('[data-add]').forEach(function (btn) {
+      btn.addEventListener('click', function () { addItem(btn.dataset.add); });
+    });
+
+    $$('[data-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () { setTab(btn.dataset.tab); });
+    });
+
+    $$('[data-zoom]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        zoom = Storage.clamp(zoom + Number(btn.dataset.zoom), -6, 6);
+        fitPreview();
+      });
+    });
+
+    $$('[data-close-modal]').forEach(function (n) { n.addEventListener('click', closeModal); });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !$('#modal').hidden) closeModal();
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        Storage.flush(state);
+        toast('Currículo salvo neste navegador.');
+      }
+    });
+
+    $('#import-file').addEventListener('change', handleImportFile);
+
+    var resizeTimer = null;
+    global.addEventListener('resize', function () {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(fitPreview, 120);
+    });
+  }
+
+  function toggleTheme() {
+    var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    Storage.saveUI({ theme: next });
+  }
+
+  function confirmNew() {
+    openModal({
+      title: 'Começar um currículo novo?',
+      text: 'Tudo que está preenchido agora será apagado deste navegador. Se quiser guardar, exporte o JSON antes.',
+      actions: [
+        { label: 'Cancelar' },
+        { label: 'Exportar JSON antes', onClick: function () { exportJSON(); } },
+        { label: 'Apagar e começar', variant: 'btn--primary', onClick: function () {
+          Storage.clear();
+          applyState(Storage.emptyState());
+          toast('Currículo novo, folha em branco.');
+        } }
+      ]
+    });
+  }
+
+  function openDataMenu() {
+    openModal({
+      title: 'Seus dados',
+      text: 'O currículo fica salvo só neste navegador. Exporte um arquivo JSON para continuar em outro aparelho.',
+      actions: [
+        { label: 'Fechar' },
+        { label: 'Importar JSON', onClick: function () { $('#import-file').click(); } },
+        { label: 'Exportar JSON', variant: 'btn--primary', onClick: exportJSON }
+      ]
+    });
+  }
+
+  function exportJSON() {
+    var name = 'curriculo-' + Pdf.slugify(state.personal.name) + '.json';
+    Storage.download(name, Storage.toJSON(state), 'application/json');
+    toast('Arquivo ' + name + ' baixado.');
+  }
+
+  function handleImportFile(e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    Storage.readFile(file)
+      .then(function (text) {
+        var next = Storage.importJSON(text);
+        applyState(next);
+        showScreen('editor');
+        toast('Dados importados.');
+      })
+      .catch(function () {
+        toast('Esse arquivo não é um JSON do Vitae.');
+      });
+    e.target.value = '';
+  }
+
+  /* Substitui o estado inteiro e redesenha o formulário. */
+  function applyState(next) {
+    state = next;
+    $$('[data-bind]').forEach(function (input) {
+      var value = getPath(state, input.dataset.bind);
+      if (input.type === 'checkbox') input.checked = !!value;
+      else input.value = value == null ? '' : value;
+    });
+    $('#f-showPhoto').checked = state.settings.showPhoto;
+    $('#f-photoZoom').value = state.personal.photoZoom;
+    $('#margin-out').textContent = state.settings.margin;
+    Object.keys(LIST_DEFS).forEach(renderList);
+    paintPhoto();
+    updateSummaryCounter();
+    syncTemplateSelection();
+    syncPaletteSelection();
+    $$('#size-group button').forEach(function (b) {
+      b.setAttribute('aria-checked', String(b.dataset.size === state.settings.size));
+    });
+    onChange();
+  }
+
+  /* ---------- exportação ---------- */
+  function doExport() {
+    if (!Pdf.ready()) {
+      toast('As bibliotecas de PDF ainda não carregaram. Tente de novo em alguns segundos.');
+      return;
+    }
+    if (!state.personal.name.trim()) {
+      openModal({
+        title: 'Seu currículo está sem nome',
+        text: 'Dá para exportar assim mesmo, mas o arquivo vai sair como "curriculo-sem-nome.pdf".',
+        actions: [
+          { label: 'Preencher o nome', onClick: function () { setTab('edit'); scrollToSection('sec-personal'); $('#f-name').focus(); } },
+          { label: 'Exportar assim', variant: 'btn--primary', onClick: runExport }
+        ]
+      });
+      return;
+    }
+    runExport();
+  }
+
+  function runExport() {
+    busy(true, 'Gerando o PDF…');
+    // Um frame para o overlay aparecer antes do trabalho pesado.
+    requestAnimationFrame(function () {
+      Pdf.exportPdf($('#cv-page'), state)
+        .then(function (result) {
+          busy(false);
+          toast(result.file + ' · ' + result.pages + (result.pages === 1 ? ' página' : ' páginas'));
+        })
+        .catch(function (err) {
+          busy(false);
+          console.error('[Vitae] falha ao exportar:', err);
+          openModal({
+            title: 'O PDF não foi gerado',
+            text: (err && err.message) ? err.message : 'Algo travou na hora de montar o arquivo. Tente de novo; se persistir, use Ctrl+P e salve como PDF.',
+            actions: [{ label: 'Entendi', variant: 'btn--primary' }]
+          });
+        });
+    });
+  }
+
+  /* =============================================================
+     Início
+     ============================================================= */
+  function init() {
+    document.documentElement.dataset.theme = ui.theme
+      || (global.matchMedia && global.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+    bindStaticFields();
+    bindPhoto();
+    bindSizeGroup();
+    buildTemplateGrid();
+    buildPaletteGrid();
+    buildRail();
+    Object.keys(LIST_DEFS).forEach(renderList);
+    paintPhoto();
+    bindActions();
+    setTab('edit');
+
+    if (hadSaved) {
+      $('#hero-resume-note').hidden = false;
+      $$('[data-action="start"]').forEach(function (btn) {
+        btn.textContent = 'Continuar meu currículo';
+      });
+    }
+
+    renderPreview();
+
+    // Garante que a folha reaja quando as fontes do Google terminarem de chegar.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { renderPreview(); });
+    }
+
+    global.addEventListener('beforeunload', function () { Storage.flush(state); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})(window);
+
+</script>
+</body>
+</html>

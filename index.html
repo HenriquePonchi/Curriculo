@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vitae — monte seu currículo e exporte em PDF</title>
+<meta name="description" content="Monte um currículo profissional em minutos, escolha o modelo, as cores e exporte em PDF tamanho A4. Grátis e sem cadastro.">
+<meta name="theme-color" content="#14171c">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Poppins:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif&display=swap"></noscript>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/print.css" media="print">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%231f6f5c'/><rect x='4' y='4' width='8' height='2' fill='%23fff'/><rect x='4' y='8' width='6' height='1.5' fill='%23fff'/><rect x='4' y='11' width='7' height='1.5' fill='%23fff'/></svg>">
+</head>
+<body data-screen="landing">
+
+<!-- ====== Sprite de ícones (SVG inline, sem requisição de rede) ====== -->
+<svg class="u-hidden" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-drag" viewBox="0 0 24 24"><path fill="currentColor" d="M9 5h2v2H9zm4 0h2v2h-2zM9 9h2v2H9zm4 0h2v2h-2zm-4 4h2v2H9zm4 0h2v2h-2zm-4 4h2v2H9zm4 0h2v2h-2z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M4 7h16M10 11v6m4-6v6M6 7l1 12.2A1.8 1.8 0 0 0 8.8 21h6.4A1.8 1.8 0 0 0 17 19.2L18 7M9 7V4.8A.8.8 0 0 1 9.8 4h4.4a.8.8 0 0 1 .8.8V7"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 3v11m0 0 4-4m-4 4-4-4M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4m0-14.2-1.4 1.4M6.3 17.7l-1.4 1.4"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+  <symbol id="i-layout" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M10 4v16M3.5 10h6.5"/></g></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 3.5a8.5 8.5 0 0 0 0 17c1.2 0 1.8-.8 1.8-1.7 0-1.3-1-1.6-1-2.6 0-.8.6-1.4 1.5-1.4h1.6c2.4 0 4.1-1.7 4.1-4.2 0-4-3.6-7.1-8-7.1Z"/><circle cx="7.8" cy="11.5" r="1.2" fill="currentColor"/><circle cx="10.6" cy="7.6" r="1.2" fill="currentColor"/><circle cx="15.2" cy="8.2" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 1.82c2.16 0 4.19.84 5.72 2.37a8.03 8.03 0 0 1 2.37 5.72c0 4.46-3.63 8.09-8.09 8.09a8.2 8.2 0 0 1-4.13-1.13l-.3-.18-3.12.82.83-3.04-.19-.31a8.07 8.07 0 0 1-1.24-4.33c0-4.46 3.63-8.01 8.15-8.01Zm-3.1 4.09c-.15 0-.4.06-.61.28-.21.22-.8.78-.8 1.9s.82 2.2.93 2.36c.12.15 1.6 2.44 3.88 3.42.54.23.96.37 1.29.48.54.17 1.04.15 1.43.09.44-.07 1.34-.55 1.53-1.08.19-.53.19-.99.13-1.08-.06-.09-.21-.15-.43-.26-.22-.11-1.34-.66-1.54-.74-.21-.08-.36-.11-.51.11-.15.22-.58.73-.71.88-.13.15-.26.17-.48.06-.22-.11-.95-.35-1.8-1.11-.67-.6-1.12-1.33-1.25-1.55-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.23-.69-1.68-.18-.44-.36-.38-.5-.39l-.43-.01Z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></g><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .26.18.58.69.48A10 10 0 0 0 12 2Z"/></symbol>
+</svg>
+
+<!-- ====== Cabeçalho ====== -->
+<header class="appbar">
+  <a class="appbar__brand" href="#" data-action="go-landing">
+    <span class="appbar__mark" aria-hidden="true"></span>
+    <span class="appbar__name">Vitae</span>
+  </a>
+
+  <div class="appbar__actions">
+    <button class="btn btn--ghost btn--icon" type="button" data-action="toggle-theme"
+            aria-label="Alternar modo escuro" title="Alternar modo escuro">
+      <svg class="icon icon--sun" aria-hidden="true"><use href="#i-sun"></use></svg>
+      <svg class="icon icon--moon" aria-hidden="true"><use href="#i-moon"></use></svg>
+    </button>
+    <button class="btn btn--ghost is-editor-only" type="button" data-action="open-data-menu">Dados</button>
+    <button class="btn btn--ghost is-editor-only" type="button" data-action="new-resume">Novo</button>
+    <button class="btn btn--primary is-editor-only" type="button" data-action="export-pdf">
+      <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>
+      <span>Exportar PDF</span>
+    </button>
+    <button class="btn btn--primary is-landing-only" type="button" data-action="start">Criar meu currículo</button>
+  </div>
+</header>
+
+<!-- ====== Landing ====== -->
+<main class="landing" id="screen-landing">
+  <section class="hero">
+    <div class="hero__copy">
+      <p class="hero__kicker">Grátis, sem cadastro, funciona no celular</p>
+      <h1 class="hero__title">Seu currículo pronto<br>para o PDF do recrutador.</h1>
+      <p class="hero__lead">Preencha os campos de um lado, veja a folha A4 se montar do outro. Troque o modelo, a cor e a fonte quantas vezes quiser — o que você escreveu continua lá.</p>
+      <div class="hero__cta">
+        <button class="btn btn--primary btn--lg" type="button" data-action="start">Começar do zero</button>
+        <button class="btn btn--quiet btn--lg" type="button" data-action="start-sample">Ver com exemplo preenchido</button>
+      </div>
+      <p class="hero__note" id="hero-resume-note" hidden>Você tem um currículo salvo neste navegador — continuamos de onde parou.</p>
+    </div>
+
+    <div class="hero__sheet" aria-hidden="true">
+      <div class="sheet">
+        <span class="sheet__bar sheet__bar--name"></span>
+        <span class="sheet__bar sheet__bar--role"></span>
+        <span class="sheet__rule"></span>
+        <span class="sheet__bar sheet__bar--l"></span>
+        <span class="sheet__bar sheet__bar--m"></span>
+        <span class="sheet__bar sheet__bar--s"></span>
+        <span class="sheet__rule"></span>
+        <span class="sheet__bar sheet__bar--m"></span>
+        <span class="sheet__bar sheet__bar--l"></span>
+        <span class="sheet__chip"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <article class="feature">
+      <h2 class="feature__title">6 modelos, do ATS ao criativo</h2>
+      <p>Um modelo preto e branco que passa nos sistemas de triagem automática, e outros cinco para quando quem lê é gente.</p>
+    </article>
+    <article class="feature">
+      <h2 class="feature__title">PDF em A4 de verdade</h2>
+      <p>210 × 297 mm, margem que você escolhe, quebra de página que não corta frase no meio.</p>
+    </article>
+    <article class="feature">
+      <h2 class="feature__title">Nada sai do seu aparelho</h2>
+      <p>Tudo fica salvo no navegador. Quer levar para outro computador? Baixe o arquivo JSON e importe lá.</p>
+    </article>
+  </section>
+</main>
+
+<!-- ====== Editor ====== -->
+<div class="editor" id="screen-editor" hidden>
+
+  <nav class="railnav" aria-label="Seções do currículo">
+    <ul class="railnav__list" id="rail-list"></ul>
+  </nav>
+
+  <!-- Coluna do formulário -->
+  <div class="pane pane--form" id="pane-form">
+    <form class="form" id="resume-form" autocomplete="on" novalidate>
+
+      <!-- Dados pessoais -->
+      <section class="panel" id="sec-personal" aria-labelledby="h-personal">
+        <h2 class="panel__title" id="h-personal">Dados pessoais</h2>
+
+        <div class="photo">
+          <div class="photo__preview">
+            <img id="photo-img" alt="Foto do currículo" hidden>
+            <span class="photo__empty" aria-hidden="true">Sem foto</span>
+          </div>
+          <div class="photo__controls">
+            <label class="btn btn--quiet btn--sm" for="f-photo">Enviar foto</label>
+            <input class="u-visually-hidden" type="file" id="f-photo" accept="image/*">
+            <button class="btn btn--quiet btn--sm" type="button" data-action="remove-photo">Remover</button>
+            <label class="switch">
+              <input type="checkbox" id="f-showPhoto" checked>
+              <span>Mostrar foto no currículo</span>
+            </label>
+            <div class="field field--inline">
+              <label for="f-photoZoom">Enquadramento</label>
+              <input type="range" id="f-photoZoom" min="100" max="220" value="100" step="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="f-name">Nome completo</label>
+            <input type="text" id="f-name" data-bind="personal.name" placeholder="Ana Beatriz Moura" required>
+          </div>
+          <div class="field">
+            <label for="f-title">Cargo desejado</label>
+            <input type="text" id="f-title" data-bind="personal.title" placeholder="Analista de Marketing Digital">
+          </div>
+          <div class="field">
+            <label for="f-email">E-mail</label>
+            <input type="email" id="f-email" data-bind="personal.email" placeholder="ana.moura@email.com">
+          </div>
+          <div class="field">
+            <label for="f-phone">Telefone</label>
+            <input type="tel" id="f-phone" data-bind="personal.phone" placeholder="(13) 99999-0000">
+          </div>
+          <div class="field">
+            <label for="f-city">Cidade / UF</label>
+            <input type="text" id="f-city" data-bind="personal.city" placeholder="Santos, SP">
+          </div>
+          <div class="field">
+            <label for="f-linkedin">LinkedIn</label>
+            <input type="text" id="f-linkedin" data-bind="personal.linkedin" placeholder="linkedin.com/in/anamoura">
+          </div>
+          <div class="field field--full">
+            <label for="f-website">Portfólio ou site</label>
+            <input type="text" id="f-website" data-bind="personal.website" placeholder="anamoura.com.br">
+          </div>
+        </div>
+      </section>
+
+      <!-- Resumo -->
+      <section class="panel" id="sec-summary" aria-labelledby="h-summary">
+        <h2 class="panel__title" id="h-summary">Resumo</h2>
+        <div class="field">
+          <label for="f-summary">Um parágrafo sobre você</label>
+          <textarea id="f-summary" data-bind="summary" rows="5" maxlength="900"
+            placeholder="Profissional de marketing com 6 anos de experiência em campanhas de performance…"></textarea>
+          <p class="field__hint" id="summary-counter" aria-live="polite">0 caracteres · o ideal fica entre 300 e 600</p>
+        </div>
+      </section>
+
+      <!-- Experiência -->
+      <section class="panel" id="sec-experience" aria-labelledby="h-experience">
+        <h2 class="panel__title" id="h-experience">Experiência profissional</h2>
+        <div class="list" id="list-experience" data-list="experience"></div>
+        <button class="btn btn--add" type="button" data-add="experience">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar experiência
+        </button>
+      </section>
+
+      <!-- Formação -->
+      <section class="panel" id="sec-education" aria-labelledby="h-education">
+        <h2 class="panel__title" id="h-education">Formação acadêmica</h2>
+        <div class="list" id="list-education" data-list="education"></div>
+        <button class="btn btn--add" type="button" data-add="education">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar formação
+        </button>
+      </section>
+
+      <!-- Habilidades -->
+      <section class="panel" id="sec-skills" aria-labelledby="h-skills">
+        <h2 class="panel__title" id="h-skills">Habilidades</h2>
+        <div class="list" id="list-skills" data-list="skills"></div>
+        <button class="btn btn--add" type="button" data-add="skills">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar habilidade
+        </button>
+      </section>
+
+      <!-- Idiomas -->
+      <section class="panel" id="sec-languages" aria-labelledby="h-languages">
+        <h2 class="panel__title" id="h-languages">Idiomas</h2>
+        <div class="list" id="list-languages" data-list="languages"></div>
+        <button class="btn btn--add" type="button" data-add="languages">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar idioma
+        </button>
+      </section>
+
+      <!-- Cursos -->
+      <section class="panel" id="sec-courses" aria-labelledby="h-courses">
+        <h2 class="panel__title" id="h-courses">Cursos e certificações</h2>
+        <div class="list" id="list-courses" data-list="courses"></div>
+        <button class="btn btn--add" type="button" data-add="courses">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar curso
+        </button>
+      </section>
+
+      <!-- Seções livres -->
+      <section class="panel" id="sec-custom" aria-labelledby="h-custom">
+        <h2 class="panel__title" id="h-custom">Seções livres</h2>
+        <p class="panel__hint">Projetos, voluntariado, publicações, referências — o título é seu.</p>
+        <div class="list" id="list-custom" data-list="custom"></div>
+        <button class="btn btn--add" type="button" data-add="custom">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg> Adicionar seção
+        </button>
+      </section>
+
+      <!-- Modelos -->
+      <section class="panel" id="sec-templates" aria-labelledby="h-templates">
+        <h2 class="panel__title" id="h-templates">Modelos</h2>
+        <div class="templates" id="template-grid" role="radiogroup" aria-labelledby="h-templates"></div>
+      </section>
+
+      <!-- Cores e tipografia -->
+      <section class="panel" id="sec-style" aria-labelledby="h-style">
+        <h2 class="panel__title" id="h-style">Cores e tipografia</h2>
+
+        <fieldset class="fieldset">
+          <legend>Paleta</legend>
+          <div class="palettes" id="palette-grid" role="radiogroup" aria-label="Paletas de cor"></div>
+          <div class="grid grid--2">
+            <div class="field">
+              <label for="f-primary">Cor principal</label>
+              <input type="color" id="f-primary" data-bind="settings.primary" value="#1f6f5c">
+            </div>
+            <div class="field">
+              <label for="f-secondary">Cor de apoio</label>
+              <input type="color" id="f-secondary" data-bind="settings.secondary" value="#2f3a3a">
+            </div>
+          </div>
+          <p class="contrast" id="contrast-note" role="status"></p>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Fonte</legend>
+          <div class="field">
+            <label for="f-font">Família</label>
+            <select id="f-font" data-bind="settings.font">
+              <option value="Inter">Inter — sem serifa, neutra</option>
+              <option value="Lato">Lato — sem serifa, humanista</option>
+              <option value="Poppins">Poppins — sem serifa, geométrica</option>
+              <option value="Source Serif 4">Source Serif — serifada, moderna</option>
+              <option value="Merriweather">Merriweather — serifada, robusta</option>
+              <option value="Georgia">Georgia — serifada, do sistema</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="field__label">Tamanho do texto</span>
+            <div class="segmented" id="size-group" role="radiogroup" aria-label="Tamanho do texto">
+              <button type="button" role="radio" data-size="s" aria-checked="false">P</button>
+              <button type="button" role="radio" data-size="m" aria-checked="true">M</button>
+              <button type="button" role="radio" data-size="l" aria-checked="false">G</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-margin">Margem da página: <output id="margin-out">15</output> mm</label>
+            <input type="range" id="f-margin" data-bind="settings.margin" min="8" max="25" step="1" value="15">
+          </div>
+        </fieldset>
+      </section>
+
+      <p class="form__end">Tudo salvo automaticamente neste navegador.</p>
+    </form>
+  </div>
+
+  <!-- Coluna do preview -->
+  <div class="pane pane--preview" id="pane-preview">
+    <div class="preview">
+      <div class="preview__toolbar">
+        <div class="zoom" role="group" aria-label="Zoom do preview">
+          <button class="btn btn--quiet btn--sm" type="button" data-zoom="-1" aria-label="Diminuir zoom">−</button>
+          <span id="zoom-out-label">Ajustar</span>
+          <button class="btn btn--quiet btn--sm" type="button" data-zoom="1" aria-label="Aumentar zoom">+</button>
+        </div>
+        <p class="preview__meta" id="page-count" aria-live="polite">1 página</p>
+      </div>
+
+      <div class="preview__stage" id="preview-stage">
+        <div class="preview__scaler" id="preview-scaler">
+          <article class="cv-page" id="cv-page" aria-label="Pré-visualização do currículo"></article>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abas do celular -->
+  <nav class="tabbar" aria-label="Seções do editor">
+    <button class="tabbar__btn is-active" type="button" data-tab="edit">
+      <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg><span>Editar</span>
+    </button>
+    <button class="tabbar__btn" type="button" data-tab="preview">
+      <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg><span>Visualizar</span>
+    </button>
+    <button class="tabbar__btn" type="button" data-tab="templates">
+      <svg class="icon" aria-hidden="true"><use href="#i-layout"></use></svg><span>Modelos</span>
+    </button>
+    <button class="tabbar__btn" type="button" data-tab="style">
+      <svg class="icon" aria-hidden="true"><use href="#i-palette"></use></svg><span>Cores</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ====== Rodapé (nunca entra no PDF) ====== -->
+<footer class="credits">
+  <p class="credits__text">Desenvolvido por <strong>Henrique Ponchi</strong></p>
+  <ul class="credits__links">
+    <li><a class="credits__link credits__link--wa" href="https://wa.me/5513996341796" target="_blank" rel="noopener" aria-label="WhatsApp de Henrique Ponchi"><svg class="icon" aria-hidden="true"><use href="#i-whatsapp"></use></svg></a></li>
+    <li><a class="credits__link credits__link--ig" href="https://instagram.com/henriponchi" target="_blank" rel="noopener" aria-label="Instagram de Henrique Ponchi"><svg class="icon" aria-hidden="true"><use href="#i-instagram"></use></svg></a></li>
+    <li><a class="credits__link credits__link--gh" href="https://github.com/HenriquePonchi" target="_blank" rel="noopener" aria-label="GitHub de Henrique Ponchi"><svg class="icon" aria-hidden="true"><use href="#i-github"></use></svg></a></li>
+  </ul>
+</footer>
+
+<!-- ====== Modal genérico ====== -->
+<div class="modal" id="modal" hidden>
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+    <h2 class="modal__title" id="modal-title"></h2>
+    <p class="modal__text" id="modal-text"></p>
+    <div class="modal__actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="overlay" id="busy" hidden><div class="overlay__box"><span class="spinner" aria-hidden="true"></span><p id="busy-text">Gerando o PDF…</p></div></div>
+
+<input type="file" id="import-file" accept="application/json,.json" class="u-visually-hidden">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="js/storage.js" defer></script>
+<script src="js/templates.js" defer></script>
+<script src="js/pdf-export.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>

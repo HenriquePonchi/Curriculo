@@ -1,0 +1,76 @@
+/* =============================================================
+   Vitae — impressão direta (Ctrl+P).
+   A exportação oficial é o html2canvas + jsPDF (js/pdf-export.js);
+   isto aqui é a rota de emergência: some com a interface e deixa
+   só a folha A4 na página.
+   ============================================================= */
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Tudo que é interface não vai para o papel */
+  .appbar,
+  .tabbar,
+  .railnav,
+  .pane--form,
+  .preview__toolbar,
+  .credits,
+  .modal,
+  .toast,
+  .overlay,
+  .landing {
+    display: none !important;
+  }
+
+  .editor { display: block !important; height: auto !important; }
+
+  .pane--preview {
+    display: block !important;
+    border: 0 !important;
+    background: #fff !important;
+    overflow: visible !important;
+  }
+
+  .preview,
+  .preview__stage {
+    display: block !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Escala de tela não pode interferir na escala do papel */
+  .preview__scaler {
+    transform: none !important;
+    width: auto !important;
+  }
+
+  .cv-page {
+    width: 210mm !important;
+    min-height: 297mm;
+    box-shadow: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Guias de quebra são auxílio de tela */
+  .cv-page__break { display: none !important; }
+
+  /* Não partir um item de experiência entre duas folhas */
+  .cv-block,
+  .cv-entry,
+  .cv-chip { break-inside: avoid; page-break-inside: avoid; }
+
+  .cv-section-title { break-after: avoid; page-break-after: avoid; }
+
+  a { text-decoration: none; color: inherit; }
+}
